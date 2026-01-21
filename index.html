@@ -22,16 +22,22 @@
 <body class="bg-slate-950 text-slate-300 h-screen flex overflow-hidden font-sans">
 
     <!-- Sidebar -->
-    <div class="w-64 bg-slate-900 border-r border-slate-700 flex flex-col flex-shrink-0">
+    <div id="main-sidebar" class="w-64 bg-slate-900 border-r border-slate-700 flex flex-col flex-shrink-0">
         <!-- Header -->
         <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-950">
             <h2 class="font-bold text-white flex items-center gap-2">
                 <i data-lucide="database" class="w-5 h-5 text-blue-400"></i>
                 SQL Buddy
             </h2>
-            <button onclick="createNewSnippet()" class="p-1 hover:bg-slate-800 rounded transition-colors text-blue-400" title="New Snippet">
-                <i data-lucide="plus" class="w-5 h-5"></i>
-            </button>
+            <div class="flex gap-1">
+                <button onclick="document.getElementById('file-input').click()" class="p-1 hover:bg-slate-800 rounded transition-colors text-slate-400" title="Import Curriculum">
+                    <i data-lucide="upload" class="w-5 h-5"></i>
+                </button>
+                <input type="file" id="file-input" class="hidden" accept=".json" onchange="importCurriculum(this)">
+                <button onclick="createNewSnippet()" class="p-1 hover:bg-slate-800 rounded transition-colors text-blue-400" title="New Snippet">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Lists -->
@@ -77,6 +83,9 @@
                 <span id="save-status" class="text-xs text-slate-500 hidden">Saved locally</span>
             </div>
             <div class="flex items-center gap-2">
+                <button onclick="togglePresentation()" class="flex items-center gap-2 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs font-medium transition-colors" title="Toggle Presentation Mode">
+                    <i data-lucide="monitor" class="w-3.5 h-3.5"></i>
+                </button>
                 <button onclick="resetDatabase()" class="flex items-center gap-2 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs font-medium transition-colors">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset DB
                 </button>
@@ -96,6 +105,9 @@
                     <h4 class="text-white text-sm font-semibold mb-1">Challenge</h4>
                     <p id="task-text" class="text-slate-300 text-sm"></p>
                 </div>
+                <button onclick="checkAnswer()" class="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-500 transition-all font-medium border border-blue-500 shadow-sm shadow-blue-900/20">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Check Answer
+                </button>
                 <button onclick="toggleSolution()" class="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all">
                     <i data-lucide="eye" class="w-3.5 h-3.5"></i> <span id="solution-btn-text">Show Solution</span>
                 </button>
@@ -143,7 +155,7 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // --- DATA CONSTANTS ---
-        const CURRICULUM = [
+        let CURRICULUM = [
             {
                 category: "0. Foundations",
                 lessons: [
@@ -194,7 +206,7 @@
             }
         ];
 
-        const INIT_SQL = `
+        let INIT_SQL = `
             CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, email TEXT, role TEXT, joined TEXT);
             INSERT INTO users VALUES 
             (1, 'Alice Johnson', 'alice@example.com', 'admin', '2023-01-01'),
@@ -222,7 +234,7 @@
             (1006, 4, 106, 1, 'delivered', '2023-05-06');
         `;
 
-        const SCHEMA = {
+        let SCHEMA = {
             users: { 
                 id: { type: 'INTEGER', key: 'PK' }, 
                 name: { type: 'TEXT' }, 
@@ -251,6 +263,7 @@
         let db = null;
         let activeSnippet = { id: null, title: "", sql: "", task: null, solution: null };
         let savedSnippets = JSON.parse(localStorage.getItem('sql_buddy_snippets') || '[]');
+        let completedLessons = JSON.parse(localStorage.getItem('sql_buddy_progress') || '[]');
 
         // --- INIT ---
         window.addEventListener('DOMContentLoaded', async () => {
@@ -293,6 +306,139 @@
             }
         }
 
+        function togglePresentation() {
+            const sidebar = document.getElementById('main-sidebar');
+            const editor = document.getElementById('sql-editor');
+            const table = document.getElementById('result-container');
+            
+            sidebar.classList.toggle('hidden');
+            
+            if (sidebar.classList.contains('hidden')) {
+                // Presentation Mode ON
+                editor.classList.add('text-xl');
+                table.classList.add('text-lg');
+            } else {
+                // Presentation Mode OFF
+                editor.classList.remove('text-xl');
+                table.classList.remove('text-lg');
+            }
+        }
+
+        function importCurriculum(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (!data.curriculum && !data.initSql) {
+                        throw new Error("Invalid format. Expected JSON with 'curriculum' or 'initSql'.");
+                    }
+
+                    if (data.curriculum) CURRICULUM = data.curriculum;
+                    if (data.schema) SCHEMA = data.schema;
+
+                    if (data.initSql) {
+                        INIT_SQL = data.initSql;
+                        // Re-init DB
+                        db.close();
+                        initDB();
+                        alert("Curriculum and Database loaded successfully!");
+                    } else {
+                        renderSidebar();
+                        alert("Curriculum loaded successfully!");
+                    }
+                    
+                    // Reset to first lesson of new curriculum
+                    if (CURRICULUM.length > 0 && CURRICULUM[0].lessons.length > 0) {
+                        loadLesson(CURRICULUM[0].lessons[0]);
+                    }
+
+                } catch (err) {
+                    alert("Error parsing file: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+            input.value = ''; // Reset so same file can be selected again
+        }
+
+        function checkAnswer() {
+            if (!activeSnippet.task || !activeSnippet.solution) return;
+            
+            const userSql = document.getElementById('sql-editor').value;
+            
+            try {
+                // 1. Run User Query
+                let userRes = [];
+                try { userRes = db.exec(userSql); } catch(e) { 
+                    runQuery(); // let runQuery handle/display the error
+                    return;
+                }
+                
+                // 2. Run Solution Query
+                let solRes = [];
+                try { solRes = db.exec(activeSnippet.solution); } catch(e) { console.error("Solution error:", e); }
+                
+                const userRows = userRes.length ? userRes[0].values : [];
+                const solRows = solRes.length ? solRes[0].values : [];
+                
+                // 3. Compare (Basic: check row count and content)
+                // We stringify to check for exact match of values and order
+                // Ideally we should sort them if order doesn't matter, but for teaching SQL, usually order matters or is specified.
+                const isCorrect = JSON.stringify(userRows) === JSON.stringify(solRows);
+                
+                runQuery(); // Always run to show results
+
+                const banner = document.getElementById('task-banner');
+                const resultContainer = document.getElementById('result-container');
+
+                if (isCorrect) {
+                    // Save Progress
+                    if (!completedLessons.includes(activeSnippet.title)) {
+                        completedLessons.push(activeSnippet.title);
+                        localStorage.setItem('sql_buddy_progress', JSON.stringify(completedLessons));
+                        renderSidebar();
+                    }
+                    
+                    // Visual Feedback in Banner
+                    const originalBorder = banner.style.borderColor;
+                    banner.classList.remove('border-slate-700');
+                    banner.classList.add('bg-green-900/20', 'border-green-500/50');
+                    
+                    // Visual Feedback in Results
+                    const successMsg = document.createElement('div');
+                    successMsg.className = "bg-green-100 text-green-800 p-2 text-xs font-bold text-center border-b border-green-200";
+                    successMsg.innerHTML = "✅ Correct! Result matches the solution.";
+                    resultContainer.insertBefore(successMsg, resultContainer.firstChild);
+
+                    setTimeout(() => {
+                        banner.classList.remove('bg-green-900/20', 'border-green-500/50');
+                        banner.classList.add('border-slate-700');
+                    }, 2000);
+                    
+                } else {
+                    // Failure Feedback
+                    banner.classList.remove('border-slate-700');
+                    banner.classList.add('bg-red-900/20', 'border-red-500/50');
+
+                    const failMsg = document.createElement('div');
+                    failMsg.className = "bg-red-100 text-red-800 p-2 text-xs font-bold text-center border-b border-red-200";
+                    failMsg.innerHTML = "❌ Incorrect. Results do not match solution.";
+                    resultContainer.insertBefore(failMsg, resultContainer.firstChild);
+
+                     setTimeout(() => {
+                        banner.classList.remove('bg-red-900/20', 'border-red-500/50');
+                        banner.classList.add('border-slate-700');
+                    }, 2000);
+                }
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
         // --- RENDERING ---
         function renderSidebar() {
             // Render Curriculum
@@ -300,12 +446,19 @@
             currContainer.innerHTML = CURRICULUM.map((cat, i) => `
                 <div class="mb-2">
                     <div class="px-2 py-1 text-slate-400 font-bold text-xs">${cat.category}</div>
-                    ${cat.lessons.map((lesson, j) => `
+                    ${cat.lessons.map((lesson, j) => {
+                        const isCompleted = completedLessons.includes(lesson.title);
+                        const checkColor = isCompleted ? "text-green-500" : "bg-slate-600";
+                        const checkIcon = isCompleted 
+                            ? '<i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-500"></i>' 
+                            : '<div class="w-1.5 h-1.5 rounded-full bg-slate-600 ml-1 mr-1"></div>';
+                        
+                        return `
                         <button onclick="loadLesson(CURRICULUM[${i}].lessons[${j}])" class="w-full text-left text-sm px-3 py-1 text-slate-400 hover:text-blue-300 hover:bg-slate-800 rounded transition-colors truncate flex items-center gap-2">
-                           <div class="w-1.5 h-1.5 rounded-full bg-slate-600"></div>
-                           ${lesson.title}
+                           ${checkIcon}
+                           <span class="${isCompleted ? 'text-slate-300' : ''}">${lesson.title}</span>
                         </button>
-                    `).join('')}
+                    `}).join('')}
                 </div>
             `).join('');
 
