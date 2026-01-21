@@ -30,6 +30,9 @@
                 SQL Buddy
             </h2>
             <div class="flex gap-1">
+                <button onclick="exportProgress()" class="p-1 hover:bg-slate-800 rounded transition-colors text-slate-400" title="Export Progress">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                </button>
                 <button onclick="document.getElementById('file-input').click()" class="p-1 hover:bg-slate-800 rounded transition-colors text-slate-400" title="Import Curriculum">
                     <i data-lucide="upload" class="w-5 h-5"></i>
                 </button>
@@ -83,6 +86,9 @@
                 <span id="save-status" class="text-xs text-slate-500 hidden">Saved locally</span>
             </div>
             <div class="flex items-center gap-2">
+                <button onclick="toggleCheatSheet()" class="flex items-center gap-2 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs font-medium transition-colors" title="SQL Reference">
+                    <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                </button>
                 <button onclick="togglePresentation()" class="flex items-center gap-2 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs font-medium transition-colors" title="Toggle Presentation Mode">
                     <i data-lucide="monitor" class="w-3.5 h-3.5"></i>
                 </button>
@@ -148,6 +154,109 @@
                         <span id="error-message"></span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cheat Sheet Modal -->
+    <div id="cheat-sheet-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-700 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-950 rounded-t-lg">
+                <h3 class="text-white font-bold flex items-center gap-2">
+                    <i data-lucide="book" class="w-5 h-5 text-blue-400"></i>
+                    SQL Cheat Sheet
+                </h3>
+                <button onclick="toggleCheatSheet()" class="text-slate-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <!-- Select & Filter -->
+                <div class="space-y-3">
+                    <h4 class="text-blue-400 font-bold uppercase text-xs tracking-wider border-b border-blue-500/20 pb-1">Retrieving Data</h4>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">SELECT * FROM table;</div>
+                        <div class="text-slate-500 text-xs">Get all columns from a table.</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">SELECT col1, col2 FROM table;</div>
+                        <div class="text-slate-500 text-xs">Get specific columns.</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">SELECT DISTINCT col FROM table;</div>
+                        <div class="text-slate-500 text-xs">Get unique values only.</div>
+                    </div>
+                     <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">... WHERE col > 5;</div>
+                        <div class="text-slate-500 text-xs">Filter rows by condition.</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">... WHERE name LIKE '%A%';</div>
+                        <div class="text-slate-500 text-xs">Search for pattern (contains 'A').</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">... ORDER BY col ASC/DESC;</div>
+                        <div class="text-slate-500 text-xs">Sort results.</div>
+                    </div>
+                     <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">... LIMIT 5;</div>
+                        <div class="text-slate-500 text-xs">Take only first 5 rows.</div>
+                    </div>
+                </div>
+
+                <!-- Aggregation -->
+                <div class="space-y-3">
+                    <h4 class="text-purple-400 font-bold uppercase text-xs tracking-wider border-b border-purple-500/20 pb-1">Aggregation</h4>
+                     <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">COUNT(*)</div>
+                        <div class="text-slate-500 text-xs">Count total rows.</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">SUM(col), AVG(col)</div>
+                        <div class="text-slate-500 text-xs">Sum or Average of a column.</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">MIN(col), MAX(col)</div>
+                        <div class="text-slate-500 text-xs">Smallest or Largest value.</div>
+                    </div>
+                     <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">GROUP BY col</div>
+                        <div class="text-slate-500 text-xs">Group data for aggregation.</div>
+                    </div>
+                </div>
+
+                <!-- Joins -->
+                <div class="space-y-3">
+                    <h4 class="text-orange-400 font-bold uppercase text-xs tracking-wider border-b border-orange-500/20 pb-1">Joins</h4>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">JOIN other ON t1.id = t2.ref_id</div>
+                        <div class="text-slate-500 text-xs">Inner join (only matches).</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">LEFT JOIN other ON ...</div>
+                        <div class="text-slate-500 text-xs">Keep all left rows, match right if exists.</div>
+                    </div>
+                </div>
+
+                <!-- Modification -->
+                <div class="space-y-3">
+                    <h4 class="text-red-400 font-bold uppercase text-xs tracking-wider border-b border-red-500/20 pb-1">Modification</h4>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">INSERT INTO table (c1, c2) VALUES (v1, v2);</div>
+                        <div class="text-slate-500 text-xs">Add new data.</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">UPDATE table SET c1 = v1 WHERE ...;</div>
+                        <div class="text-slate-500 text-xs">Modify existing data.</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-mono text-green-400 font-bold">DELETE FROM table WHERE ...;</div>
+                        <div class="text-slate-500 text-xs">Remove data.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-700 bg-slate-950 rounded-b-lg text-center">
+                 <button onclick="toggleCheatSheet()" class="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-sm transition-colors">Close</button>
             </div>
         </div>
     </div>
@@ -306,6 +415,11 @@
             }
         }
 
+        function toggleCheatSheet() {
+            const modal = document.getElementById('cheat-sheet-modal');
+            modal.classList.toggle('hidden');
+        }
+
         function togglePresentation() {
             const sidebar = document.getElementById('main-sidebar');
             const editor = document.getElementById('sql-editor');
@@ -322,6 +436,23 @@
                 editor.classList.remove('text-xl');
                 table.classList.remove('text-lg');
             }
+        }
+
+        function exportProgress() {
+            const data = {
+                completedLessons: completedLessons,
+                savedSnippets: savedSnippets,
+                timestamp: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sql-buddy-progress-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function importCurriculum(input) {
@@ -615,7 +746,25 @@
 
             } catch (err) {
                 errorContainer.classList.remove('hidden');
-                document.getElementById('error-message').innerText = err.message;
+                let msg = err.message;
+                let hint = "";
+
+                // Friendly Error Hints
+                if (msg.includes("no such table")) {
+                    hint = "Did you misspell the table name? Check the Schema list on the left.";
+                } else if (msg.includes("no such column")) {
+                    hint = "That column doesn't exist. Check the spelling or the Schema.";
+                } else if (msg.includes("syntax error")) {
+                    hint = "Check your SQL syntax. Are you missing a keyword like FROM or WHERE?";
+                } else if (msg.includes("ambiguous column name")) {
+                    hint = "Two joined tables have this column. Use 'table_name.column_name' to be specific.";
+                }
+
+                if (hint) {
+                    msg += `<br><br><span class="text-slate-500 font-normal">💡 <strong>Hint:</strong> ${hint}</span>`;
+                }
+
+                document.getElementById('error-message').innerHTML = msg;
             }
         }
 
