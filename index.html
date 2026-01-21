@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Buddy (Local)</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SQL.js for the database engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom scrollbar for a darker theme look */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .code-font { font-family: 'Menlo', 'Monaco', 'Courier New', monospace; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-300 h-screen flex overflow-hidden font-sans">
+
+    <!-- Sidebar -->
+    <div class="w-64 bg-slate-900 border-r border-slate-700 flex flex-col flex-shrink-0">
+        <!-- Header -->
+        <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-950">
+            <h2 class="font-bold text-white flex items-center gap-2">
+                <i data-lucide="database" class="w-5 h-5 text-blue-400"></i>
+                SQL Buddy
+            </h2>
+            <button onclick="createNewSnippet()" class="p-1 hover:bg-slate-800 rounded transition-colors text-blue-400" title="New Snippet">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Lists -->
+        <div class="flex-1 overflow-y-auto" id="sidebar-content">
+            <!-- Curriculum Section -->
+            <div class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="book-open" class="w-3 h-3"></i> Curriculum
+            </div>
+            <div id="curriculum-list" class="space-y-1 px-2 pb-4">
+                <!-- Lessons injected by JS -->
+            </div>
+
+            <!-- Saved Snippets Section -->
+            <div class="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2 border-t border-slate-800 pt-4">
+                <i data-lucide="save" class="w-3 h-3"></i> Your Saved Snippets
+            </div>
+            <div id="snippet-list" class="space-y-1 px-2 pb-4">
+                <!-- User snippets injected by JS -->
+            </div>
+        </div>
+
+        <!-- Schema Footer -->
+        <div class="h-64 border-t border-slate-700 bg-slate-900 flex flex-col">
+            <div class="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2 bg-slate-950">
+                <i data-lucide="columns" class="w-3 h-3"></i> Schema
+            </div>
+            <div class="flex-1 overflow-y-auto p-2 space-y-2" id="schema-container">
+                <!-- Schema injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 bg-[#1e1e1e]">
+        
+        <!-- Toolbar -->
+        <div class="h-14 border-b border-slate-800 bg-slate-900 flex items-center px-4 justify-between flex-shrink-0">
+            <div class="flex items-center gap-3 flex-1">
+                <div class="bg-blue-500/10 text-blue-400 p-1.5 rounded">
+                    <i data-lucide="terminal" class="w-4 h-4"></i>
+                </div>
+                <input type="text" id="snippet-title" class="bg-transparent text-white font-semibold focus:outline-none focus:bg-slate-800 px-2 py-1 rounded w-full max-w-md" placeholder="Untitled Query">
+                <span id="save-status" class="text-xs text-slate-500 hidden">Saved locally</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="resetDatabase()" class="flex items-center gap-2 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs font-medium transition-colors">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset DB
+                </button>
+                <button onclick="runQuery()" class="flex items-center gap-2 px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors shadow-sm">
+                    <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i> Run
+                </button>
+            </div>
+        </div>
+
+        <!-- Task Banner (Hidden by default) -->
+        <div id="task-banner" class="hidden bg-slate-800 border-b border-slate-700 p-4">
+            <div class="flex items-start gap-3">
+                <div class="bg-blue-500/20 p-2 rounded text-blue-400">
+                    <i data-lucide="lightbulb" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                    <h4 class="text-white text-sm font-semibold mb-1">Challenge</h4>
+                    <p id="task-text" class="text-slate-300 text-sm"></p>
+                </div>
+                <button onclick="toggleSolution()" class="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all">
+                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> <span id="solution-btn-text">Show Solution</span>
+                </button>
+            </div>
+            <div id="solution-box" class="hidden mt-3 bg-[#0d0d0d] border border-slate-600 rounded p-3">
+                <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Solution:</div>
+                <code id="solution-code" class="code-font text-green-400 text-sm whitespace-pre-wrap"></code>
+            </div>
+        </div>
+
+        <!-- Workspace Split -->
+        <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            <!-- Editor -->
+            <div class="flex-1 h-1/2 lg:h-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col relative">
+                <textarea id="sql-editor" class="flex-1 w-full bg-[#1e1e1e] text-slate-200 p-4 code-font text-sm resize-none focus:outline-none leading-relaxed" spellcheck="false" placeholder="SELECT * FROM users..."></textarea>
+            </div>
+
+            <!-- Results -->
+            <div class="flex-1 h-1/2 lg:h-full lg:w-1/2 bg-white flex flex-col relative overflow-hidden">
+                <!-- Result Tabs/Header -->
+                <div class="bg-slate-50 border-b border-slate-200 p-2 flex justify-between items-center">
+                    <span class="text-xs font-bold text-slate-500 uppercase px-2">Results</span>
+                    <span id="row-count" class="text-xs text-slate-400">0 rows</span>
+                </div>
+                
+                <!-- Table Container -->
+                <div id="result-container" class="flex-1 overflow-auto">
+                    <div class="flex flex-col items-center justify-center h-full text-slate-400">
+                        <i data-lucide="table" class="w-12 h-12 mb-4 opacity-20"></i>
+                        <p>Run a query to see results</p>
+                    </div>
+                </div>
+
+                <!-- Error Container -->
+                <div id="error-container" class="hidden absolute inset-0 bg-white p-6">
+                    <div class="bg-red-50 text-red-600 p-4 rounded border border-red-200 font-mono text-sm">
+                        <strong class="block mb-2">Error:</strong>
+                        <span id="error-message"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA CONSTANTS ---
+        const CURRICULUM = [
+            {
+                category: "0. Foundations",
+                lessons: [
+                    { title: "Hello SQL", sql: "SELECT 'Hello World' as greeting", task: "Select a simple text string 'Hello World'.", solution: "SELECT 'Hello World' as greeting" },
+                    { title: "Limiting Results", sql: "SELECT * FROM users LIMIT 2", task: "Get only the first 2 users.", solution: "SELECT * FROM users LIMIT 2" },
+                    { title: "Unique Values", sql: "SELECT DISTINCT role FROM users", task: "Find all unique roles (no duplicates).", solution: "SELECT DISTINCT role FROM users" }
+                ]
+            },
+            {
+                category: "1. Basics",
+                lessons: [
+                    { title: "Select All", sql: "SELECT * FROM users", task: "Retrieve all columns from the users table.", solution: "SELECT * FROM users" },
+                    { title: "Filtering with WHERE", sql: "SELECT * FROM products WHERE price > 20", task: "Find all products that cost more than $20.", solution: "SELECT * FROM products WHERE price > 20" },
+                    { title: "Specific Columns", sql: "SELECT name, email FROM users", task: "Show only the name and email of all users.", solution: "SELECT name, email FROM users" },
+                    { title: "String Matching", sql: "SELECT * FROM users WHERE email LIKE '%gmail%'", task: "Find users with 'gmail' in their email.", solution: "SELECT * FROM users WHERE email LIKE '%gmail%'" }
+                ]
+            },
+            {
+                category: "2. Keys & Relationships",
+                lessons: [
+                    { title: "Primary Keys (PK)", sql: "SELECT id FROM users WHERE name = 'Alice Johnson'", task: "Find the User ID for 'Alice Johnson'.", solution: "SELECT id FROM users WHERE name = 'Alice Johnson'" },
+                    { title: "Foreign Keys (FK)", sql: "SELECT * FROM orders WHERE user_id = 1", task: "Find all orders placed by User ID 1.", solution: "SELECT * FROM orders WHERE user_id = 1" },
+                    { title: "Joining via Keys", sql: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id", task: "Join Users and Orders using the PK and FK.", solution: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id" }
+                ]
+            },
+            {
+                category: "3. Aggregation",
+                lessons: [
+                    { title: "Counting Rows", sql: "SELECT COUNT(*) FROM orders", task: "How many orders have been placed?", solution: "SELECT COUNT(*) FROM orders" },
+                    { title: "Grouping Data", sql: "SELECT category, COUNT(*) as count FROM products GROUP BY category", task: "Count how many products are in each category.", solution: "SELECT category, COUNT(*) as count FROM products GROUP BY category" },
+                    { title: "Average Calculation", sql: "SELECT AVG(price) as average_price FROM products", task: "What is the average price of all products?", solution: "SELECT AVG(price) as average_price FROM products" }
+                ]
+            },
+            {
+                category: "4. Joins (Intermediate)",
+                lessons: [
+                    { title: "Inner Join", sql: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id", task: "Show the user name and order status for all orders.", solution: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id" },
+                    { title: "Multiple Joins", sql: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'", task: "Find who ordered 'Electronics'.", solution: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'" },
+                    { title: "Left Join", sql: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id", task: "Show all users, even those who haven't ordered anything.", solution: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id" }
+                ]
+            },
+            {
+                category: "5. Data Modification",
+                lessons: [
+                    { title: "Insert Data", sql: "INSERT INTO users (id, name, email, role, joined) \nVALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');\nSELECT * FROM users;", task: "Add a new user named 'Frank'.", solution: "INSERT INTO users (id, name, email, role, joined) VALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');" },
+                    { title: "Update Data", sql: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';\nSELECT * FROM users;", task: "Change Alice's role to 'superadmin'.", solution: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';" }
+                ]
+            }
+        ];
+
+        const INIT_SQL = `
+            CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, email TEXT, role TEXT, joined TEXT);
+            INSERT INTO users VALUES 
+            (1, 'Alice Johnson', 'alice@example.com', 'admin', '2023-01-01'),
+            (2, 'Bob Smith', 'bob@test.com', 'user', '2023-01-15'),
+            (3, 'Charlie Brown', 'charlie@gmail.com', 'user', '2023-02-10'),
+            (4, 'Diana Prince', 'diana@wonder.com', 'moderator', '2023-03-05'),
+            (5, 'Evan Wright', 'evan@tech.com', 'user', '2023-03-20');
+
+            CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price REAL, category TEXT, stock INTEGER);
+            INSERT INTO products VALUES
+            (101, 'Wireless Mouse', 29.99, 'Electronics', 50),
+            (102, 'Mechanical Keyboard', 129.50, 'Electronics', 20),
+            (103, 'Coffee Mug', 12.00, 'Home', 100),
+            (104, 'Notebook', 5.99, 'Office', 200),
+            (105, 'USB-C Cable', 15.00, 'Electronics', 75),
+            (106, 'Gaming Monitor', 299.99, 'Electronics', 10);
+
+            CREATE TABLE orders (id INTEGER PRIMARY KEY, user_id INTEGER, product_id INTEGER, amount INTEGER, status TEXT, date TEXT);
+            INSERT INTO orders VALUES
+            (1001, 1, 102, 1, 'shipped', '2023-05-01'),
+            (1002, 2, 101, 2, 'processing', '2023-05-02'),
+            (1003, 1, 105, 3, 'delivered', '2023-05-03'),
+            (1004, 3, 103, 1, 'cancelled', '2023-05-04'),
+            (1005, 2, 103, 4, 'shipped', '2023-05-05'),
+            (1006, 4, 106, 1, 'delivered', '2023-05-06');
+        `;
+
+        const SCHEMA = {
+            users: { 
+                id: { type: 'INTEGER', key: 'PK' }, 
+                name: { type: 'TEXT' }, 
+                email: { type: 'TEXT' }, 
+                role: { type: 'TEXT' }, 
+                joined: { type: 'TEXT' } 
+            },
+            products: { 
+                id: { type: 'INTEGER', key: 'PK' }, 
+                name: { type: 'TEXT' }, 
+                price: { type: 'REAL' }, 
+                category: { type: 'TEXT' }, 
+                stock: { type: 'INTEGER' } 
+            },
+            orders: { 
+                id: { type: 'INTEGER', key: 'PK' }, 
+                user_id: { type: 'INTEGER', key: 'FK' }, 
+                product_id: { type: 'INTEGER', key: 'FK' }, 
+                amount: { type: 'INTEGER' }, 
+                status: { type: 'TEXT' }, 
+                date: { type: 'TEXT' } 
+            }
+        };
+
+        // --- STATE ---
+        let db = null;
+        let activeSnippet = { id: null, title: "", sql: "", task: null, solution: null };
+        let savedSnippets = JSON.parse(localStorage.getItem('sql_buddy_snippets') || '[]');
+
+        // --- INIT ---
+        window.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            await initDB();
+            renderSidebar();
+            
+            // Load first lesson if no snippets, or empty
+            if (savedSnippets.length > 0) {
+                loadSnippet(savedSnippets[0].id);
+            } else {
+                loadLesson(CURRICULUM[0].lessons[0]);
+            }
+
+            // Auto-save listener
+            document.getElementById('sql-editor').addEventListener('input', (e) => {
+                activeSnippet.sql = e.target.value;
+                debounceSave();
+            });
+            document.getElementById('snippet-title').addEventListener('input', (e) => {
+                activeSnippet.title = e.target.value;
+                debounceSave();
+            });
+        });
+
+        async function initDB() {
+            const config = { locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.wasm` };
+            const SQL = await initSqlJs(config);
+            db = new SQL.Database();
+            db.run(INIT_SQL);
+            console.log("DB Initialized");
+        }
+
+        function resetDatabase() {
+            if(confirm("Reset database?")) {
+                db.close();
+                initDB();
+                alert("Database reset to default.");
+                runQuery();
+            }
+        }
+
+        // --- RENDERING ---
+        function renderSidebar() {
+            // Render Curriculum
+            const currContainer = document.getElementById('curriculum-list');
+            currContainer.innerHTML = CURRICULUM.map((cat, i) => `
+                <div class="mb-2">
+                    <div class="px-2 py-1 text-slate-400 font-bold text-xs">${cat.category}</div>
+                    ${cat.lessons.map((lesson, j) => `
+                        <button onclick="loadLesson(CURRICULUM[${i}].lessons[${j}])" class="w-full text-left text-sm px-3 py-1 text-slate-400 hover:text-blue-300 hover:bg-slate-800 rounded transition-colors truncate flex items-center gap-2">
+                           <div class="w-1.5 h-1.5 rounded-full bg-slate-600"></div>
+                           ${lesson.title}
+                        </button>
+                    `).join('')}
+                </div>
+            `).join('');
+
+            // Render User Snippets
+            const snipContainer = document.getElementById('snippet-list');
+            if (savedSnippets.length === 0) {
+                snipContainer.innerHTML = '<div class="text-xs text-slate-600 italic px-3">No saved snippets</div>';
+            } else {
+                snipContainer.innerHTML = savedSnippets.map(s => `
+                    <div class="flex items-center justify-between group hover:bg-slate-800 rounded pr-2">
+                        <button onclick="loadSnippet('${s.id}')" class="flex-1 text-left text-sm px-3 py-1.5 text-slate-300 truncate">
+                            ${s.title || 'Untitled'}
+                        </button>
+                        <button onclick="deleteSnippet('${s.id}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i data-lucide="trash-2" class="w-3 h-3"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // Render Schema with Keys
+            const schemaContainer = document.getElementById('schema-container');
+            schemaContainer.innerHTML = Object.keys(SCHEMA).map(table => `
+                <div class="bg-slate-800/50 border border-slate-700 rounded mb-2 overflow-hidden">
+                    <div class="px-3 py-1 bg-slate-800 text-xs font-bold text-emerald-400 font-mono flex items-center gap-2">
+                        <i data-lucide="table" class="w-3 h-3"></i>
+                        ${table}
+                    </div>
+                    <div class="p-2 space-y-1">
+                        ${Object.keys(SCHEMA[table]).map(col => {
+                            const info = SCHEMA[table][col];
+                            let icon = '';
+                            let colClass = 'text-slate-400';
+                            if (info.key === 'PK') {
+                                icon = '<i data-lucide="key" class="w-3 h-3 text-amber-400 mr-1"></i>';
+                                colClass = 'text-amber-100 font-bold';
+                            } else if (info.key === 'FK') {
+                                icon = '<i data-lucide="link" class="w-3 h-3 text-blue-400 mr-1"></i>';
+                                colClass = 'text-blue-200';
+                            } else {
+                                icon = '<div class="w-4"></div>';
+                            }
+
+                            return `
+                            <div class="flex justify-between items-center text-[10px] font-mono group hover:bg-slate-800/50 rounded px-1 -mx-1">
+                                <div class="flex items-center">
+                                    ${icon}
+                                    <span class="${colClass}">${col}</span>
+                                </div>
+                                <span class="text-slate-600 italic">${info.type.substring(0,3)}</span>
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // --- LOGIC ---
+
+        function loadLesson(lesson) {
+            // Creating a "temp" snippet for the lesson
+            activeSnippet = {
+                id: null, // null ID means it's not saved yet
+                title: lesson.title,
+                sql: "", // Empty for them to type
+                task: lesson.task,
+                solution: lesson.solution
+            };
+            updateUI();
+        }
+
+        function loadSnippet(id) {
+            const found = savedSnippets.find(s => s.id === id);
+            if (found) {
+                activeSnippet = { ...found, task: null, solution: null }; // Load simplified
+                updateUI();
+                runQuery(); // Auto run on load
+            }
+        }
+
+        function createNewSnippet() {
+            activeSnippet = {
+                id: Date.now().toString(),
+                title: "New Query",
+                sql: "SELECT * FROM users",
+                task: null,
+                solution: null
+            };
+            savedSnippets.push(activeSnippet);
+            saveToStorage();
+            updateUI();
+            runQuery();
+        }
+
+        function updateUI() {
+            document.getElementById('snippet-title').value = activeSnippet.title;
+            document.getElementById('sql-editor').value = activeSnippet.sql;
+            
+            // Task Banner
+            const banner = document.getElementById('task-banner');
+            if (activeSnippet.task) {
+                banner.classList.remove('hidden');
+                document.getElementById('task-text').innerText = activeSnippet.task;
+                document.getElementById('solution-code').innerText = activeSnippet.solution;
+                document.getElementById('solution-box').classList.add('hidden');
+                document.getElementById('solution-btn-text').innerText = "Show Solution";
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function runQuery() {
+            const sql = document.getElementById('sql-editor').value;
+            const errorContainer = document.getElementById('error-container');
+            const resultContainer = document.getElementById('result-container');
+            const rowCount = document.getElementById('row-count');
+
+            try {
+                // If query is empty do nothing
+                if (!sql.trim()) return;
+
+                const res = db.exec(sql);
+                errorContainer.classList.add('hidden');
+                
+                if (res.length === 0) {
+                    // Check if it was a modification query
+                    if (sql.toLowerCase().includes('insert') || sql.toLowerCase().includes('update')) {
+                         resultContainer.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-slate-500 gap-2"><i data-lucide="check-circle-2" class="w-10 h-10 text-green-500/50"></i><p>Query executed successfully.</p></div>';
+                         lucide.createIcons();
+                    } else {
+                         resultContainer.innerHTML = '<div class="h-full flex items-center justify-center text-slate-500 italic">Query executed. No rows returned.</div>';
+                    }
+                    rowCount.innerText = "0 rows";
+                    return;
+                }
+
+                const data = res[0];
+                rowCount.innerText = `${data.values.length} rows`;
+
+                // Render Table
+                let html = '<table class="w-full text-left text-sm border-collapse"><thead class="bg-slate-100 text-slate-700 sticky top-0"><tr>';
+                data.columns.forEach(col => html += `<th class="p-3 border-b font-semibold text-xs whitespace-nowrap border-r border-slate-200 last:border-r-0">${col}</th>`);
+                html += '</tr></thead><tbody class="text-slate-600">';
+                data.values.forEach(row => {
+                    html += '<tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0">';
+                    row.forEach(val => html += `<td class="p-3 border-r border-slate-100 last:border-r-0 font-mono text-xs whitespace-nowrap">${val}</td>`);
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+                resultContainer.innerHTML = html;
+
+            } catch (err) {
+                errorContainer.classList.remove('hidden');
+                document.getElementById('error-message').innerText = err.message;
+            }
+        }
+
+        // --- STORAGE & UTILS ---
+        let saveTimer;
+        function debounceSave() {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+                // If it's a saved snippet (has ID), update it
+                if (activeSnippet.id) {
+                    const idx = savedSnippets.findIndex(s => s.id === activeSnippet.id);
+                    if (idx !== -1) savedSnippets[idx] = { ...activeSnippet };
+                    saveToStorage();
+                    document.getElementById('save-status').classList.remove('hidden');
+                    setTimeout(() => document.getElementById('save-status').classList.add('hidden'), 2000);
+                }
+            }, 1000);
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('sql_buddy_snippets', JSON.stringify(savedSnippets));
+            renderSidebar();
+        }
+
+        function deleteSnippet(id) {
+            if (confirm("Delete this snippet?")) {
+                savedSnippets = savedSnippets.filter(s => s.id !== id);
+                saveToStorage();
+                if (activeSnippet.id === id) loadLesson(CURRICULUM[0].lessons[0]);
+            }
+        }
+
+        function toggleSolution() {
+            const box = document.getElementById('solution-box');
+            const btnText = document.getElementById('solution-btn-text');
+            if (box.classList.contains('hidden')) {
+                box.classList.remove('hidden');
+                btnText.innerText = "Hide Solution";
+            } else {
+                box.classList.add('hidden');
+                btnText.innerText = "Show Solution";
+            }
+        }
+    </script>
+</body>
+</html>
