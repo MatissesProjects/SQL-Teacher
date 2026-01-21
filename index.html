@@ -111,6 +111,9 @@
                     <h4 class="text-white text-sm font-semibold mb-1">Challenge</h4>
                     <p id="task-text" class="text-slate-300 text-sm"></p>
                 </div>
+                <button onclick="resetLesson()" class="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all" title="Restart Lesson">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                </button>
                 <button onclick="checkAnswer()" class="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-500 transition-all font-medium border border-blue-500 shadow-sm shadow-blue-900/20">
                     <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Check Answer
                 </button>
@@ -435,6 +438,32 @@
                 // Presentation Mode OFF
                 editor.classList.remove('text-xl');
                 table.classList.remove('text-lg');
+            }
+        }
+
+        function resetLesson() {
+            if (!activeSnippet.task) return;
+            
+            if(confirm("Restart this lesson? This will reset your code and progress for this specific task.")) {
+                 activeSnippet.sql = "";
+                 updateUI();
+                 
+                 // Remove completion status
+                 const idx = completedLessons.indexOf(activeSnippet.title);
+                 if (idx !== -1) {
+                     completedLessons.splice(idx, 1);
+                     localStorage.setItem('sql_buddy_progress', JSON.stringify(completedLessons));
+                     renderSidebar();
+                 }
+                 
+                 // Clear results
+                 document.getElementById('result-container').innerHTML = '<div class="flex flex-col items-center justify-center h-full text-slate-400"><i data-lucide="table" class="w-12 h-12 mb-4 opacity-20"></i><p>Run a query to see results</p></div>';
+                 document.getElementById('row-count').innerText = "0 rows";
+                 
+                 // Reset Banner Colors
+                 const banner = document.getElementById('task-banner');
+                 banner.classList.remove('bg-green-900/20', 'border-green-500/50', 'bg-red-900/20', 'border-red-500/50');
+                 banner.classList.add('border-slate-700');
             }
         }
 
