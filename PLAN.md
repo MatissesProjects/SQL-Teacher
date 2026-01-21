@@ -20,18 +20,13 @@ Enhance the existing single-file SQL learning tool to better support teaching mu
 - [x] **Import Curriculum:** Added JSON import for custom lesson plans.
 - [x] **Custom Init SQL:** Supported in the import format.
 
-## Phase 4: Classroom/Presentation Tools (In Progress)
+## Phase 4: Classroom/Presentation Tools (Completed)
 - [x] **Presentation Mode:** Added toggle for sidebar/font size.
-- [ ] **Student Export:** Allow students to "Export Progress" (a JSON summary of their completed lessons and code) to submit to the teacher.
+- [x] **Student Export:** Added button to download progress JSON.
 
-## Phase 5: Student Aids (New)
-- [ ] **SQL Cheat Sheet:** A reference modal with common SQL syntax patterns.
-- [ ] **Friendly Error Messages:** Intercept raw SQL errors and provide helpful hints (e.g., "Did you mean 'WHERE' instead of 'WERE'?").
-
-## Technical Tasks
-1.  **Student Export:** Add button and `exportProgress` function.
-2.  **Cheat Sheet:** Add Modal HTML and toggle logic.
-3.  **Error Handling:** Enhance `runQuery` catch block with regex-based hints.
+## Phase 5: Student Aids (Completed)
+- [x] **SQL Cheat Sheet:** A reference modal with common SQL syntax patterns.
+- [x] **Friendly Error Messages:** Intercept raw SQL errors and provide helpful hints.
 
 ## Future Ideas (Backlog)
 -   In-browser schema builder/editor.
