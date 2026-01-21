@@ -307,49 +307,49 @@
             {
                 category: "0. Foundations",
                 lessons: [
-                    { title: "Hello SQL", sql: "SELECT 'Hello World' as greeting", task: "Select a simple text string 'Hello World'.", solution: "SELECT 'Hello World' as greeting" },
-                    { title: "Limiting Results", sql: "SELECT * FROM users LIMIT 2", task: "Get only the first 2 users.", solution: "SELECT * FROM users LIMIT 2" },
-                    { title: "Unique Values", sql: "SELECT DISTINCT role FROM users", task: "Find all unique roles (no duplicates).", solution: "SELECT DISTINCT role FROM users" }
+                    { title: "Hello SQL", sql: "SELECT 'Hello World' as greeting", task: "Select a simple text string 'Hello World' and alias it as 'greeting'.", solution: "SELECT 'Hello World' as greeting" },
+                    { title: "Limiting Results", sql: "SELECT * FROM users LIMIT 2", task: "Get all columns for the first 2 users.", solution: "SELECT * FROM users LIMIT 2" },
+                    { title: "Unique Values", sql: "SELECT DISTINCT role FROM users", task: "Find all unique values in the 'role' column.", solution: "SELECT DISTINCT role FROM users" }
                 ]
             },
             {
                 category: "1. Basics",
                 lessons: [
                     { title: "Select All", sql: "SELECT * FROM users", task: "Retrieve all columns from the users table.", solution: "SELECT * FROM users" },
-                    { title: "Filtering with WHERE", sql: "SELECT * FROM products WHERE price > 20", task: "Find all products that cost more than $20.", solution: "SELECT * FROM products WHERE price > 20" },
-                    { title: "Specific Columns", sql: "SELECT name, email FROM users", task: "Show only the name and email of all users.", solution: "SELECT name, email FROM users" },
-                    { title: "String Matching", sql: "SELECT * FROM users WHERE email LIKE '%gmail%'", task: "Find users with 'gmail' in their email.", solution: "SELECT * FROM users WHERE email LIKE '%gmail%'" }
+                    { title: "Filtering with WHERE", sql: "SELECT * FROM products WHERE price > 20", task: "Find all columns for products that cost more than $20.", solution: "SELECT * FROM products WHERE price > 20" },
+                    { title: "Specific Columns", sql: "SELECT name, email FROM users", task: "Show only the 'name' and 'email' columns for all users.", solution: "SELECT name, email FROM users" },
+                    { title: "String Matching", sql: "SELECT * FROM users WHERE email LIKE '%gmail%'", task: "Find all columns for users with 'gmail' in their email.", solution: "SELECT * FROM users WHERE email LIKE '%gmail%'" }
                 ]
             },
             {
                 category: "2. Keys & Relationships",
                 lessons: [
-                    { title: "Primary Keys (PK)", sql: "SELECT id FROM users WHERE name = 'Alice Johnson'", task: "Find the User ID for 'Alice Johnson'.", solution: "SELECT id FROM users WHERE name = 'Alice Johnson'" },
-                    { title: "Foreign Keys (FK)", sql: "SELECT * FROM orders WHERE user_id = 1", task: "Find all orders placed by User ID 1.", solution: "SELECT * FROM orders WHERE user_id = 1" },
-                    { title: "Joining via Keys", sql: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id", task: "Join Users and Orders using the PK and FK.", solution: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id" }
+                    { title: "Primary Keys (PK)", sql: "SELECT id FROM users WHERE name = 'Alice Johnson'", task: "Find the 'id' for the user named 'Alice Johnson'.", solution: "SELECT id FROM users WHERE name = 'Alice Johnson'" },
+                    { title: "Foreign Keys (FK)", sql: "SELECT * FROM orders WHERE user_id = 1", task: "Find all columns for orders placed by User ID 1.", solution: "SELECT * FROM orders WHERE user_id = 1" },
+                    { title: "Joining via Keys", sql: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id", task: "Join Users and Orders. Select the user's 'name' and the order's 'id' (aliased as 'order_id').", solution: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id" }
                 ]
             },
             {
                 category: "3. Aggregation",
                 lessons: [
-                    { title: "Counting Rows", sql: "SELECT COUNT(*) FROM orders", task: "How many orders have been placed?", solution: "SELECT COUNT(*) FROM orders" },
-                    { title: "Grouping Data", sql: "SELECT category, COUNT(*) as count FROM products GROUP BY category", task: "Count how many products are in each category.", solution: "SELECT category, COUNT(*) as count FROM products GROUP BY category" },
-                    { title: "Average Calculation", sql: "SELECT AVG(price) as average_price FROM products", task: "What is the average price of all products?", solution: "SELECT AVG(price) as average_price FROM products" }
+                    { title: "Counting Rows", sql: "SELECT COUNT(*) FROM orders", task: "Count the total number of orders placed.", solution: "SELECT COUNT(*) FROM orders" },
+                    { title: "Grouping Data", sql: "SELECT category, COUNT(*) as count FROM products GROUP BY category", task: "Select 'category' and a count of products (aliased as 'count') for each category.", solution: "SELECT category, COUNT(*) as count FROM products GROUP BY category" },
+                    { title: "Average Calculation", sql: "SELECT AVG(price) as average_price FROM products", task: "Calculate the average price of all products and alias it as 'average_price'.", solution: "SELECT AVG(price) as average_price FROM products" }
                 ]
             },
             {
                 category: "4. Joins (Intermediate)",
                 lessons: [
-                    { title: "Inner Join", sql: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id", task: "Show the user name and order status for all orders.", solution: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id" },
-                    { title: "Multiple Joins", sql: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'", task: "Find who ordered 'Electronics'.", solution: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'" },
-                    { title: "Left Join", sql: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id", task: "Show all users, even those who haven't ordered anything.", solution: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id" }
+                    { title: "Inner Join", sql: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id", task: "Show the user 'name' and order 'status' for all orders.", solution: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id" },
+                    { title: "Multiple Joins", sql: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'", task: "Find who ordered 'Electronics'. Select user 'name', product 'name', and product 'category'.", solution: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'" },
+                    { title: "Left Join", sql: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id", task: "Show all users, even those who haven't ordered anything. Select user 'name' and order 'id' (aliased as 'order_id').", solution: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id" }
                 ]
             },
             {
                 category: "5. Data Modification",
                 lessons: [
-                    { title: "Insert Data", sql: "INSERT INTO users (id, name, email, role, joined) \nVALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');\nSELECT * FROM users;", task: "Add a new user named 'Frank'.", solution: "INSERT INTO users (id, name, email, role, joined) VALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');" },
-                    { title: "Update Data", sql: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';\nSELECT * FROM users;", task: "Change Alice's role to 'superadmin'.", solution: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';" }
+                    { title: "Insert Data", sql: "INSERT INTO users (id, name, email, role, joined) \nVALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');\nSELECT * FROM users;", task: "Add a new user named 'Frank'. Then select all columns from users to verify.", solution: "INSERT INTO users (id, name, email, role, joined) VALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');" },
+                    { title: "Update Data", sql: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';\nSELECT * FROM users;", task: "Change Alice's role to 'superadmin'. Then select all columns from users to verify.", solution: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';" }
                 ]
             }
         ];
