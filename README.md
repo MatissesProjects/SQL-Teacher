@@ -2,8 +2,6 @@
 
 A lightweight, browser-based interactive SQL learning tool that runs entirely locally using WebAssembly.
 
-![SQL Buddy Interface](https://via.placeholder.com/800x450?text=SQL+Buddy+Interface+Preview)
-
 ## Overview
 
 **SQL Teacher** (also known as SQL Buddy) is a single-file application designed to help users learn and practice SQL queries without needing to set up a database server. It leverages `sql.js` to run a fully functional SQLite database directly in your web browser.
