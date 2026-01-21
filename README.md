@@ -6,10 +6,12 @@ A lightweight, browser-based interactive SQL learning tool that runs entirely lo
 
 **SQL Teacher** (also known as SQL Buddy) is a single-file application designed to help users learn and practice SQL queries without needing to set up a database server. It leverages `sql.js` to run a fully functional SQLite database directly in your web browser.
 
-## New Features (v2.0)
+## New Features (v2.1)
 
 -   **✅ Smart Validation:** The "Check Answer" button runs your query and compares the actual results with the expected solution, giving you instant verification.
--   **🏆 Progress Tracking:** Your completed lessons are saved locally. Look for the green checkmarks in the sidebar!
+-   **🏆 Progress Tracking & Export:** Your completed lessons are saved locally. You can now **Export your Progress** (JSON) to submit to a teacher or save for later.
+-   **📚 SQL Cheat Sheet:** Stuck on syntax? Click the "?" icon in the toolbar for a quick reference guide.
+-   **💡 Friendly Error Hints:** If you make a typo, the tool provides helpful tips (e.g., "Did you mean 'WHERE'?" or "Check your column spelling").
 -   **👩‍🏫 Teacher Mode (Import Curriculum):** You can now load custom lesson plans (JSON files). Great for teachers creating specific assignments for students.
 -   **🖥️ Presentation Mode:** A dedicated button to hide the sidebar and increase font sizes, perfect for projecting in a classroom.
 
