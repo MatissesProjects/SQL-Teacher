@@ -45,9 +45,9 @@
             /* Results Table */
             .results-table { @apply w-full text-left text-sm border-collapse; }
             .results-thead { @apply bg-slate-100 text-slate-700 sticky top-0; }
-            .results-th { @apply p-3 border-b font-semibold text-xs whitespace-nowrap border-r border-slate-200 last:border-r-0; }
+            .results-th { @apply p-3 border-b font-bold text-slate-900 text-xs whitespace-nowrap border-r border-slate-200 last:border-r-0; }
             .results-tr { @apply hover:bg-slate-50 border-b border-slate-100 last:border-0; }
-            .results-td { @apply p-3 border-r border-slate-100 last:border-r-0 font-mono text-xs whitespace-nowrap; }
+            .results-td { @apply p-3 border-r border-slate-100 last:border-r-0 font-mono text-xs text-slate-900 whitespace-nowrap; }
 
             /* Modals */
             .modal-overlay { @apply fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 backdrop-blur-sm; }
@@ -67,10 +67,10 @@
             </h2>
             <div class="flex gap-1">
                 <button onclick="exportProgress()" class="btn-icon" title="Export Progress">
-                    <i data-lucide="download" class="w-5 h-5"></i>
+                    <i data-lucide="upload" class="w-5 h-5"></i>
                 </button>
                 <button onclick="document.getElementById('file-input').click()" class="btn-icon" title="Import Curriculum">
-                    <i data-lucide="upload" class="w-5 h-5"></i>
+                    <i data-lucide="download" class="w-5 h-5"></i>
                 </button>
                 <input type="file" id="file-input" class="hidden" accept=".json" onchange="importCurriculum(this)">
                 <button onclick="createNewSnippet()" class="btn-icon text-blue-400" title="New Snippet">
@@ -99,10 +99,14 @@
         </div>
 
         <!-- Schema Footer -->
-        <div class="sidebar-footer">
-            <div class="sidebar-label bg-slate-950">
-                <i data-lucide="columns" class="w-3 h-3"></i> Schema
-            </div>
+        <div class="sidebar-footer transition-all duration-300 h-64" id="schema-footer">
+            <button onclick="toggleSchema()" class="sidebar-label bg-slate-950 w-full hover:bg-slate-900 cursor-pointer justify-between group">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="columns" class="w-3 h-3 text-slate-500 group-hover:text-slate-300"></i> 
+                    <span class="group-hover:text-slate-300 transition-colors">Schema</span>
+                </div>
+                <i data-lucide="chevron-down" class="w-3 h-3 text-slate-600 group-hover:text-slate-300 transition-transform" id="schema-chevron"></i>
+            </button>
             <div class="flex-1 overflow-y-auto p-2 space-y-2" id="schema-container">
                 <!-- Schema injected by JS -->
             </div>
@@ -122,6 +126,9 @@
                 <span id="save-status" class="text-xs text-slate-500 hidden">Saved locally</span>
             </div>
             <div class="flex items-center gap-2">
+                <button onclick="saveCurrentAsSnippet()" class="btn-secondary" title="Save as Snippet">
+                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                </button>
                 <button onclick="toggleCheatSheet()" class="btn-secondary" title="SQL Reference">
                     <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
                 </button>
@@ -141,21 +148,30 @@
         <div id="task-banner" class="hidden bg-slate-800 border-b border-slate-700 p-4">
             <div class="flex items-start gap-3">
                 <div class="bg-blue-500/20 p-2 rounded text-blue-400">
-                    <i data-lucide="lightbulb" class="w-5 h-5"></i>
+                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
                 </div>
                 <div class="flex-1">
-                    <h4 class="text-white text-sm font-semibold mb-1">Challenge</h4>
-                    <p id="task-text" class="text-slate-300 text-sm"></p>
+                    <div id="explanation-box" class="mb-3 border-b border-slate-700/50 pb-3 hidden">
+                        <h4 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-1">Learn</h4>
+                        <p id="explanation-text" class="text-slate-300 text-sm leading-relaxed"></p>
+                    </div>
+                    
+                    <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-1">Challenge</h4>
+                    <p id="task-text" class="text-slate-200 text-sm"></p>
                 </div>
-                <button onclick="resetLesson()" class="btn-outline" title="Restart Lesson">
-                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="checkAnswer()" class="btn-accent">
-                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Check Answer
-                </button>
-                <button onclick="toggleSolution()" class="btn-outline">
-                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> <span id="solution-btn-text">Show Solution</span>
-                </button>
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-2">
+                        <button onclick="resetLesson()" class="btn-outline" title="Restart Lesson">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button onclick="checkAnswer()" class="btn-accent">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Check
+                        </button>
+                    </div>
+                    <button onclick="toggleSolution()" class="btn-outline w-full justify-center">
+                        <i data-lucide="eye" class="w-3.5 h-3.5"></i> <span id="solution-btn-text">Solution</span>
+                    </button>
+                </div>
             </div>
             <div id="solution-box" class="hidden mt-3 bg-dark-panel border border-slate-600 rounded p-3">
                 <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Solution:</div>
@@ -307,49 +323,150 @@
             {
                 category: "0. Foundations",
                 lessons: [
-                    { title: "Hello SQL", sql: "SELECT 'Hello World' as greeting", task: "Select a simple text string 'Hello World' and alias it as 'greeting'.", solution: "SELECT 'Hello World' as greeting" },
-                    { title: "Limiting Results", sql: "SELECT * FROM users LIMIT 2", task: "Get all columns for the first 2 users.", solution: "SELECT * FROM users LIMIT 2" },
-                    { title: "Unique Values", sql: "SELECT DISTINCT role FROM users", task: "Find all unique values in the 'role' column.", solution: "SELECT DISTINCT role FROM users" }
+                    { 
+                        title: "Select All", 
+                        sql: "SELECT * FROM users", 
+                        task: "Retrieve all columns from the 'users' table.", 
+                        solution: "SELECT * FROM users",
+                        explanation: "The <code>SELECT</code> statement is the foundation of SQL. <br>• <code>*</code> is a wildcard that means 'all columns'. <br>• <code>FROM users</code> tells the database which table to search." 
+                    },
+                    { 
+                        title: "Limiting Results", 
+                        sql: "SELECT * FROM users LIMIT 2", 
+                        task: "Get all columns for the first 2 users.", 
+                        solution: "SELECT * FROM users LIMIT 2",
+                        explanation: "When a table contains thousands of rows, you often just want to peek at the data. <br>Use <code>LIMIT n</code> to restrict the result to <code>n</code> rows."
+                    },
+                    { 
+                        title: "Unique Values", 
+                        sql: "SELECT DISTINCT role FROM users", 
+                        task: "Find all unique values in the 'role' column.", 
+                        solution: "SELECT DISTINCT role FROM users",
+                        explanation: "The <code>DISTINCT</code> keyword removes duplicate rows from the result. <br>This is useful for finding all available categories, roles, or types."
+                    }
                 ]
             },
             {
                 category: "1. Basics",
                 lessons: [
-                    { title: "Select All", sql: "SELECT * FROM users", task: "Retrieve all columns from the users table.", solution: "SELECT * FROM users" },
-                    { title: "Filtering with WHERE", sql: "SELECT * FROM products WHERE price > 20", task: "Find all columns for products that cost more than $20.", solution: "SELECT * FROM products WHERE price > 20" },
-                    { title: "Specific Columns", sql: "SELECT name, email FROM users", task: "Show only the 'name' and 'email' columns for all users.", solution: "SELECT name, email FROM users" },
-                    { title: "String Matching", sql: "SELECT * FROM users WHERE email LIKE '%gmail%'", task: "Find all columns for users with 'gmail' in their email.", solution: "SELECT * FROM users WHERE email LIKE '%gmail%'" }
+                    { 
+                        title: "Specific Columns", 
+                        sql: "SELECT name, email FROM users", 
+                        task: "Show only the 'name' and 'email' columns for all users.", 
+                        solution: "SELECT name, email FROM users",
+                        explanation: "Instead of fetching everything with <code>*</code>, you can list specific column names separated by commas. This is better for performance and clarity."
+                    },
+                    { 
+                        title: "Filtering with WHERE", 
+                        sql: "SELECT * FROM products WHERE price > 20", 
+                        task: "Find all columns for products that cost more than $20.", 
+                        solution: "SELECT * FROM products WHERE price > 20",
+                        explanation: "The <code>WHERE</code> clause filters rows based on a specific condition. Only rows where the condition is true are returned."
+                    },
+                    { 
+                        title: "String Matching", 
+                        sql: "SELECT * FROM users WHERE email LIKE '%gmail%'", 
+                        task: "Find all columns for users with 'gmail' in their email.", 
+                        solution: "SELECT * FROM users WHERE email LIKE '%gmail%'",
+                        explanation: "The <code>LIKE</code> operator is used for pattern matching. <br><code>%</code> is a wildcard that matches any sequence of characters (e.g. '%gmail%' matches any email containing 'gmail')."
+                    }
                 ]
             },
             {
                 category: "2. Keys & Relationships",
                 lessons: [
-                    { title: "Primary Keys (PK)", sql: "SELECT id FROM users WHERE name = 'Alice Johnson'", task: "Find the 'id' for the user named 'Alice Johnson'.", solution: "SELECT id FROM users WHERE name = 'Alice Johnson'" },
-                    { title: "Foreign Keys (FK)", sql: "SELECT * FROM orders WHERE user_id = 1", task: "Find all columns for orders placed by User ID 1.", solution: "SELECT * FROM orders WHERE user_id = 1" },
-                    { title: "Joining via Keys", sql: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id", task: "Join Users and Orders. Select the user's 'name' and the order's 'id' (aliased as 'order_id').", solution: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id" }
+                    { 
+                        title: "Primary Keys (PK)", 
+                        sql: "SELECT id FROM users WHERE name = 'Alice Johnson'", 
+                        task: "Find the 'id' for the user named 'Alice Johnson'.", 
+                        solution: "SELECT id FROM users WHERE name = 'Alice Johnson'",
+                        explanation: "A **Primary Key** is a unique identifier for a specific row. It ensures that every record can be distinctly identified (like a user ID)."
+                    },
+                    { 
+                        title: "Foreign Keys (FK)", 
+                        sql: "SELECT * FROM orders WHERE user_id = 1", 
+                        task: "Find all columns for orders placed by User ID 1.", 
+                        solution: "SELECT * FROM orders WHERE user_id = 1",
+                        explanation: "A **Foreign Key** is a column that links to the Primary Key of another table. This link creates a relationship between the data (e.g. associating an order with a user)."
+                    },
+                    { 
+                        title: "Joining via Keys", 
+                        sql: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id", 
+                        task: "Join Users and Orders. Select the user's 'name' and the order's 'id' (aliased as 'order_id').", 
+                        solution: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id",
+                        explanation: "To combine data from two tables, you use <code>JOIN</code>. You must specify how they match using <code>ON</code> (usually matching the Foreign Key to the Primary Key)."
+                    }
                 ]
             },
             {
                 category: "3. Aggregation",
                 lessons: [
-                    { title: "Counting Rows", sql: "SELECT COUNT(*) FROM orders", task: "Count the total number of orders placed.", solution: "SELECT COUNT(*) FROM orders" },
-                    { title: "Grouping Data", sql: "SELECT category, COUNT(*) as count FROM products GROUP BY category", task: "Select 'category' and a count of products (aliased as 'count') for each category.", solution: "SELECT category, COUNT(*) as count FROM products GROUP BY category" },
-                    { title: "Average Calculation", sql: "SELECT AVG(price) as average_price FROM products", task: "Calculate the average price of all products and alias it as 'average_price'.", solution: "SELECT AVG(price) as average_price FROM products" }
+                    { 
+                        title: "Counting Rows", 
+                        sql: "SELECT COUNT(*) FROM orders", 
+                        task: "Count the total number of orders placed.", 
+                        solution: "SELECT COUNT(*) FROM orders",
+                        explanation: "<code>COUNT(*)</code> returns the total number of rows that match your criteria. It is one of the most common ways to get quick statistics."
+                    },
+                    { 
+                        title: "Grouping Data", 
+                        sql: "SELECT category, COUNT(*) as count FROM products GROUP BY category", 
+                        task: "Select 'category' and a count of products (aliased as 'count') for each category.", 
+                        solution: "SELECT category, COUNT(*) as count FROM products GROUP BY category",
+                        explanation: "<code>GROUP BY</code> groups rows that have the same values into summary rows. It is often used with aggregate functions like `COUNT`, `SUM`, or `AVG`."
+                    },
+                    { 
+                        title: "Average Calculation", 
+                        sql: "SELECT AVG(price) as average_price FROM products", 
+                        task: "Calculate the average price of all products and alias it as 'average_price'.", 
+                        solution: "SELECT AVG(price) as average_price FROM products",
+                        explanation: "SQL has built-in math functions. <code>AVG()</code> calculates the average value of a numeric column. Others include <code>SUM()</code>, <code>MIN()</code>, and <code>MAX()</code>."
+                    }
                 ]
             },
             {
                 category: "4. Joins (Intermediate)",
                 lessons: [
-                    { title: "Inner Join", sql: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id", task: "Show the user 'name' and order 'status' for all orders.", solution: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id" },
-                    { title: "Multiple Joins", sql: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'", task: "Find who ordered 'Electronics'. Select user 'name', product 'name', and product 'category'.", solution: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'" },
-                    { title: "Left Join", sql: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id", task: "Show all users, even those who haven't ordered anything. Select user 'name' and order 'id' (aliased as 'order_id').", solution: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id" }
+                    { 
+                        title: "Inner Join", 
+                        sql: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id", 
+                        task: "Show the user 'name' and order 'status' for all orders.", 
+                        solution: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id",
+                        explanation: "An <code>INNER JOIN</code> (or just <code>JOIN</code>) returns only the rows where there is a match in **both** tables. Unmatched rows are excluded."
+                    },
+                    { 
+                        title: "Multiple Joins", 
+                        sql: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'", 
+                        task: "Find who ordered 'Electronics'. Select user 'name', product 'name', and product 'category'.", 
+                        solution: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'",
+                        explanation: "You can chain multiple <code>JOIN</code> statements to connect several tables together in a single query. Here we link Orders to both Users and Products."
+                    },
+                    { 
+                        title: "Left Join", 
+                        sql: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id", 
+                        task: "Show all users, even those who haven't ordered anything. Select user 'name' and order 'id' (aliased as 'order_id').", 
+                        solution: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id",
+                        explanation: "A <code>LEFT JOIN</code> returns **all** rows from the left table (Users), and the matched rows from the right table (Orders). If there is no match, the result is NULL."
+                    }
                 ]
             },
             {
                 category: "5. Data Modification",
                 lessons: [
-                    { title: "Insert Data", sql: "INSERT INTO users (id, name, email, role, joined) \nVALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');\nSELECT * FROM users;", task: "Add a new user named 'Frank'. Then select all columns from users to verify.", solution: "INSERT INTO users (id, name, email, role, joined) VALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');" },
-                    { title: "Update Data", sql: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';\nSELECT * FROM users;", task: "Change Alice's role to 'superadmin'. Then select all columns from users to verify.", solution: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';" }
+                    { 
+                        title: "Insert Data", 
+                        sql: "INSERT INTO users (id, name, email, role, joined) \nVALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');\nSELECT * FROM users;", 
+                        task: "Add a new user named 'Frank'. Then select all columns from users to verify.", 
+                        solution: "INSERT INTO users (id, name, email, role, joined) VALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');",
+                        explanation: "<code>INSERT INTO</code> adds new records to a table. You typically specify the table name, the column names, and the `VALUES` to insert."
+                    },
+                    { 
+                        title: "Update Data", 
+                        sql: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';\nSELECT * FROM users;", 
+                        task: "Change Alice's role to 'superadmin'. Then select all columns from users to verify.", 
+                        solution: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';",
+                        explanation: "<code>UPDATE</code> modifies existing records. <br>⚠️ **Important:** Always include a <code>WHERE</code> clause, or you might accidentally update every row in the table!"
+                    }
                 ]
             }
         ];
@@ -451,6 +568,37 @@
                 initDB();
                 alert("Database reset to default.");
                 runQuery();
+            }
+        }
+
+        function saveCurrentAsSnippet() {
+            if (activeSnippet.id) {
+                // Already a saved snippet
+                saveToStorage();
+                // Visual feedback
+                const btn = document.querySelector('button[title="Save as Snippet"]');
+                const icon = btn.querySelector('i');
+                const original = icon.innerHTML;
+                icon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>'; // checkmark
+                setTimeout(() => { icon.innerHTML = original; lucide.createIcons(); }, 1000);
+            } else {
+                // Save as new
+                const title = prompt("Enter a name for this snippet:", activeSnippet.title || "My Query");
+                if (title) {
+                    const newSnippet = {
+                        id: Date.now().toString(),
+                        title: title,
+                        sql: document.getElementById('sql-editor').value,
+                        task: null,
+                        solution: null,
+                        explanation: null
+                    };
+                    savedSnippets.push(newSnippet);
+                    saveToStorage();
+                    activeSnippet = newSnippet;
+                    updateUI();
+                    runQuery();
+                }
             }
         }
 
@@ -641,19 +789,24 @@
             const currContainer = document.getElementById('curriculum-list');
             currContainer.innerHTML = CURRICULUM.map((cat, i) => `
                 <div class="mb-2">
-                    <div class="px-2 py-1 text-slate-400 font-bold text-xs">${cat.category}</div>
-                    ${cat.lessons.map((lesson, j) => {
-                        const isCompleted = completedLessons.includes(lesson.title);
-                        const checkIcon = isCompleted 
-                            ? '<i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-500"></i>' 
-                            : '<div class="w-1.5 h-1.5 rounded-full bg-slate-600 ml-1 mr-1"></div>';
-                        
-                        return `
-                        <button onclick="loadLesson(CURRICULUM[${i}].lessons[${j}])" class="sidebar-item">
-                           ${checkIcon}
-                           <span class="${isCompleted ? 'text-slate-300' : ''}">${lesson.title}</span>
-                        </button>
-                    `}).join('')}
+                    <button onclick="toggleCategory(${i})" class="flex items-center justify-between w-full px-2 py-1 text-slate-400 font-bold text-xs hover:text-slate-200 transition-colors group">
+                        <span class="group-hover:text-white transition-colors">${cat.category}</span>
+                        <i data-lucide="chevron-down" class="w-3 h-3 transition-transform duration-200" id="cat-icon-${i}"></i>
+                    </button>
+                    <div id="cat-content-${i}" class="overflow-hidden transition-all duration-300">
+                        ${cat.lessons.map((lesson, j) => {
+                            const isCompleted = completedLessons.includes(lesson.title);
+                            const checkIcon = isCompleted 
+                                ? '<i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-500"></i>' 
+                                : '<div class="w-1.5 h-1.5 rounded-full bg-slate-600 ml-1 mr-1"></div>';
+                            
+                            return `
+                            <button onclick="loadLesson(CURRICULUM[${i}].lessons[${j}])" class="sidebar-item ml-2 border-l border-slate-800 pl-2">
+                               ${checkIcon}
+                               <span class="${isCompleted ? 'text-slate-300' : ''}">${lesson.title}</span>
+                            </button>
+                        `}).join('')}
+                    </div>
                 </div>
             `).join('');
 
@@ -714,6 +867,27 @@
             lucide.createIcons();
         }
 
+        function toggleCategory(i) {
+             const content = document.getElementById(`cat-content-${i}`);
+             const icon = document.getElementById(`cat-icon-${i}`);
+             content.classList.toggle('hidden');
+             icon.style.transform = content.classList.contains('hidden') ? 'rotate(-90deg)' : 'rotate(0deg)';
+        }
+
+        function toggleSchema() {
+            const footer = document.getElementById('schema-footer');
+            const chevron = document.getElementById('schema-chevron');
+            if (footer.classList.contains('h-10')) {
+                footer.classList.remove('h-10'); // Expand
+                footer.classList.add('h-64');
+                chevron.style.transform = 'rotate(0deg)';
+            } else {
+                footer.classList.remove('h-64'); // Collapse
+                footer.classList.add('h-10'); // Header height
+                chevron.style.transform = 'rotate(180deg)';
+            }
+        }
+
         // --- LOGIC ---
 
         function loadLesson(lesson) {
@@ -723,7 +897,8 @@
                 title: lesson.title,
                 sql: "", // Empty for them to type
                 task: lesson.task,
-                solution: lesson.solution
+                solution: lesson.solution,
+                explanation: lesson.explanation
             };
             updateUI();
         }
@@ -731,7 +906,7 @@
         function loadSnippet(id) {
             const found = savedSnippets.find(s => s.id === id);
             if (found) {
-                activeSnippet = { ...found, task: null, solution: null }; // Load simplified
+                activeSnippet = { ...found, task: null, solution: null, explanation: null }; // Load simplified
                 updateUI();
                 runQuery(); // Auto run on load
             }
@@ -743,7 +918,8 @@
                 title: "New Query",
                 sql: "SELECT * FROM users",
                 task: null,
-                solution: null
+                solution: null,
+                explanation: null
             };
             savedSnippets.push(activeSnippet);
             saveToStorage();
@@ -760,9 +936,19 @@
             if (activeSnippet.task) {
                 banner.classList.remove('hidden');
                 document.getElementById('task-text').innerText = activeSnippet.task;
+                
+                // Explanation
+                const expBox = document.getElementById('explanation-box');
+                if (activeSnippet.explanation) {
+                    expBox.classList.remove('hidden');
+                    document.getElementById('explanation-text').innerHTML = activeSnippet.explanation;
+                } else {
+                    expBox.classList.add('hidden');
+                }
+
                 document.getElementById('solution-code').innerText = activeSnippet.solution;
                 document.getElementById('solution-box').classList.add('hidden');
-                document.getElementById('solution-btn-text').innerText = "Show Solution";
+                document.getElementById('solution-btn-text').innerText = "Solution";
             } else {
                 banner.classList.add('hidden');
             }
@@ -773,6 +959,14 @@
             const errorContainer = document.getElementById('error-container');
             const resultContainer = document.getElementById('result-container');
             const rowCount = document.getElementById('row-count');
+            
+            // Visual feedback (Run Flash)
+            const rightPanel = resultContainer.parentElement;
+            const flash = document.createElement('div');
+            flash.className = 'absolute inset-0 bg-green-500/10 pointer-events-none z-10 transition-opacity duration-300';
+            rightPanel.appendChild(flash);
+            setTimeout(() => flash.classList.add('opacity-0'), 50);
+            setTimeout(() => flash.remove(), 350);
 
             try {
                 // If query is empty do nothing
