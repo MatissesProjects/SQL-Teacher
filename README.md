@@ -19,6 +19,10 @@ A lightweight, browser-based interactive SQL learning tool that runs entirely lo
 
 ## Getting Started
 
+1. Currently hosted at [sqlbuddy.matissetec.dev](https://sqlbuddy.matissetec.dev/) if you want to try without downloading
+
+or host it locally
+
 1.  Clone this repository or download the `index.html` file.
 2.  Open `index.html` in any modern web browser.
 3.  **To Learn:** Hover over the left edge of the screen to reveal the sidebar. Select a lesson, read the "Learn" context, and complete the "Challenge".
