@@ -168,8 +168,11 @@
                         <button onclick="resetLesson()" class="btn-outline" title="Restart Lesson">
                             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                         </button>
-                        <button onclick="checkAnswer()" class="btn-accent">
+                        <button onclick="checkAnswer()" class="btn-accent" id="btn-check">
                             <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Check
+                        </button>
+                        <button onclick="loadNextLesson()" class="hidden btn-primary bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors shadow-lg shadow-green-900/20" id="btn-next">
+                            Next <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
                     <button onclick="toggleSolution()" class="btn-outline w-full justify-center">
@@ -747,6 +750,10 @@
                         banner.classList.remove('bg-green-900/20', 'border-green-500/50');
                         banner.classList.add('border-slate-700');
                     }, 2000);
+
+                    // Show Next Lesson Button
+                    document.getElementById('btn-next').classList.remove('hidden');
+                    document.getElementById('btn-check').classList.add('hidden');
                     
                 } else {
                     // Failure Feedback
@@ -766,6 +773,34 @@
 
             } catch (err) {
                 console.error(err);
+            }
+        }
+
+        function loadNextLesson() {
+            // Find current lesson index
+            let currentCatIdx = -1;
+            let currentLessonIdx = -1;
+
+            for (let i = 0; i < CURRICULUM.length; i++) {
+                const lIdx = CURRICULUM[i].lessons.findIndex(l => l.title === activeSnippet.title);
+                if (lIdx !== -1) {
+                    currentCatIdx = i;
+                    currentLessonIdx = lIdx;
+                    break;
+                }
+            }
+
+            if (currentCatIdx === -1) return; // Not found
+
+            // Calculate next
+            if (currentLessonIdx < CURRICULUM[currentCatIdx].lessons.length - 1) {
+                // Next in same category
+                loadLesson(CURRICULUM[currentCatIdx].lessons[currentLessonIdx + 1]);
+            } else if (currentCatIdx < CURRICULUM.length - 1) {
+                // First in next category
+                loadLesson(CURRICULUM[currentCatIdx + 1].lessons[0]);
+            } else {
+                alert("Congratulations! You have completed all lessons!");
             }
         }
 
@@ -919,9 +954,16 @@
             
             // Task Banner
             const banner = document.getElementById('task-banner');
+            const btnNext = document.getElementById('btn-next');
+            const btnCheck = document.getElementById('btn-check');
+
             if (activeSnippet.task) {
                 banner.classList.remove('hidden');
                 document.getElementById('task-text').innerText = activeSnippet.task;
+                
+                // Reset buttons state on new lesson
+                if(btnNext) btnNext.classList.add('hidden');
+                if(btnCheck) btnCheck.classList.remove('hidden');
                 
                 // Explanation
                 const expBox = document.getElementById('explanation-box');
