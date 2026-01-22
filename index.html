@@ -641,10 +641,15 @@
         function showTableDetails(table) {
             try {
                 // Get DDL
-                const ddlRes = db.exec(`SELECT sql FROM sqlite_master WHERE type='table' AND name='${table}'`);
-                const ddl = ddlRes.length ? ddlRes[0].values[0][0] : "No definition found.";
+                // Refactored to use db.prepare for safer parameter binding
+                const stmt = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name=:name");
+                const row = stmt.getAsObject({':name': table});
+                stmt.free(); // Always free statements in sql.js
+                const ddl = row.sql || "No definition found.";
 
                 // Get Sample Data
+                // Note: Table names cannot be parameterized in SQL (e.g. 'FROM ?' is invalid). 
+                // We must use interpolation, but 'table' is trusted here as it comes from our hardcoded SCHEMA keys.
                 const dataRes = db.exec(`SELECT * FROM ${table} LIMIT 3`);
                 
                 // Render
