@@ -6,34 +6,27 @@ A lightweight, browser-based interactive SQL learning tool that runs entirely lo
 
 **SQL Teacher** (also known as SQL Buddy) is a single-file application designed to help users learn and practice SQL queries without needing to set up a database server. It leverages `sql.js` to run a fully functional SQLite database directly in your web browser.
 
-## New Features (v2.1)
+## Key Features
 
--   **✅ Smart Validation:** The "Check Answer" button runs your query and compares the actual results with the expected solution, giving you instant verification.
--   **🏆 Progress Tracking & Export:** Your completed lessons are saved locally. You can now **Export your Progress** (JSON) to submit to a teacher or save for later.
--   **📚 SQL Cheat Sheet:** Stuck on syntax? Click the "?" icon in the toolbar for a quick reference guide.
--   **💡 Friendly Error Hints:** If you make a typo, the tool provides helpful tips (e.g., "Did you mean 'WHERE'?" or "Check your column spelling").
--   **👩‍🏫 Teacher Mode (Import Curriculum):** You can now load custom lesson plans (JSON files). Great for teachers creating specific assignments for students.
--   **🖥️ Presentation Mode:** A dedicated button to hide the sidebar and increase font sizes, perfect for projecting in a classroom.
-
-## Standard Features
-
-- **Zero Setup:** Just open the file in your browser. No server, node.js, or database installation required.
-- **Interactive SQL Editor:** Write and execute queries with instant feedback.
-- **Built-in Curriculum:** Structured lessons covering Foundations, Basics, Keys, Aggregation, Joins, and more.
-- **Visual Schema:** See table structures, primary keys, and foreign keys at a glance.
-- **Local Persistence:** Your custom snippets are saved to your browser's local storage.
-- **Responsive UI:** Clean, dark-themed interface styled with Tailwind CSS.
+-   **🎓 Educational Explanations:** Every lesson now includes a "Learn" section that explains the SQL concepts before you tackle the challenge.
+-   **✅ Smart Validation:** The "Check Answer" button runs your query and compares results with the solution for instant verification.
+-   **💾 Snippet Management:** Use the dedicated "Save as Snippet" button to store your favorite queries or work-in-progress scripts.
+-   **📚 Interactive Curriculum:** Structured lessons covering everything from Foundations and Basics to Aggregation, Joins, and Data Modification.
+-   **🧭 Hover-to-Reveal Sidebar:** A sleek, auto-hiding sidebar that stays out of your way while you work, revealing the Curriculum and Schema only when you need them.
+-   **📂 Import/Export:** Export your progress as JSON or import custom curriculum files created by teachers.
+-   **🔍 Visual Schema:** A collapsible schema viewer that shows table structures, Primary Keys, and Foreign Keys at a glance.
+-   **⚡ Zero Setup:** Runs entirely in the browser using WebAssembly. No database or server installation required.
 
 ## Getting Started
 
 1.  Clone this repository or download the `index.html` file.
-2.  Open `index.html` in any modern web browser (Chrome, Firefox, Edge, Safari).
-3.  **To Learn:** Click a lesson in the sidebar. Read the task, write your SQL, and click "Check Answer".
-4.  **To Teach:** Create a JSON curriculum file (see format below) and use the Upload icon in the sidebar header to load it.
+2.  Open `index.html` in any modern web browser.
+3.  **To Learn:** Hover over the left edge of the screen to reveal the sidebar. Select a lesson, read the "Learn" context, and complete the "Challenge".
+4.  **To Practice:** Write custom queries in the editor and use the "Save" icon to keep them in your "Saved Snippets" list.
 
 ## Custom Curriculum Format (JSON)
 
-Teachers can create a `.json` file with the following structure to load their own lessons:
+Teachers can create a `.json` file with the following structure:
 
 ```json
 {
@@ -43,6 +36,7 @@ Teachers can create a `.json` file with the following structure to load their ow
       "lessons": [
         { 
           "title": "Find the Gold", 
+          "explanation": "The WHERE clause filters data based on conditions.",
           "task": "Select all items with color 'Gold'", 
           "solution": "SELECT * FROM items WHERE color = 'Gold'" 
         }
@@ -59,6 +53,6 @@ Teachers can create a `.json` file with the following structure to load their ow
 ## Tech Stack
 
 -   **Core:** HTML5, Vanilla JavaScript
--   **Styling:** [Tailwind CSS](https://tailwindcss.com/) (via CDN)
+-   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 -   **Icons:** [Lucide](https://lucide.dev/)
--   **Database Engine:** [sql.js](https://sql.js.org/) (SQLite compiled to WebAssembly)
+-   **Database Engine:** [sql.js](https://sql.js.org/) (SQLite via WebAssembly)
