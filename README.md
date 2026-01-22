@@ -8,14 +8,14 @@ A lightweight, browser-based interactive SQL learning tool that runs entirely lo
 
 ## Key Features
 
--   **🎓 Educational Explanations:** Every lesson now includes a "Learn" section that explains the SQL concepts before you tackle the challenge.
--   **✅ Smart Validation:** The "Check Answer" button runs your query and compares results with the solution for instant verification.
--   **💾 Snippet Management:** Use the dedicated "Save as Snippet" button to store your favorite queries or work-in-progress scripts.
--   **📚 Interactive Curriculum:** Structured lessons covering everything from Foundations and Basics to Aggregation, Joins, and Data Modification.
--   **🧭 Hover-to-Reveal Sidebar:** A sleek, auto-hiding sidebar that stays out of your way while you work, revealing the Curriculum and Schema only when you need them.
--   **📂 Import/Export:** Export your progress as JSON or import custom curriculum files created by teachers.
--   **🔍 Visual Schema:** A collapsible schema viewer that shows table structures, Primary Keys, and Foreign Keys at a glance.
--   **⚡ Zero Setup:** Runs entirely in the browser using WebAssembly. No database or server installation required.
+-   **Educational Explanations:** Every lesson now includes a "Learn" section that explains the SQL concepts before you tackle the challenge.
+-   **Smart Validation:** The "Check Answer" button runs your query and compares results with the solution for instant verification.
+-   **Snippet Management:** Use the dedicated "Save as Snippet" button to store your favorite queries or work-in-progress scripts.
+-   **Interactive Curriculum:** Structured lessons covering everything from Foundations and Basics to Aggregation, Joins, and Data Modification.
+-   **Hover-to-Reveal Sidebar:** A sleek, auto-hiding sidebar that stays out of your way while you work, revealing the Curriculum and Schema only when you need them.
+-   **Import/Export:** Export your progress as JSON or import custom curriculum files created by teachers.
+-   **Visual Schema:** A collapsible schema viewer that shows table structures, Primary Keys, and Foreign Keys at a glance.
+-   **Zero Setup:** Runs entirely in the browser using WebAssembly. No database or server installation required.
 
 ## Getting Started
 
