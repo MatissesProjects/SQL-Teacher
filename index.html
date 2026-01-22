@@ -369,14 +369,31 @@
         // --- DATA CONSTANTS ---
         let CURRICULUM = [
             {
-                category: "0. Foundations",
+                category: "0. Select Fundamentals",
                 lessons: [
                     { 
                         title: "Select All", 
                         sql: "SELECT * FROM users", 
                         task: "Retrieve all columns from the 'users' table.", 
                         solution: "SELECT * FROM users",
-                        explanation: "The <code>SELECT</code> statement is the foundation of SQL. <br>• <code>*</code> is a wildcard that means 'all columns'. <br>• <code>FROM users</code> tells the database which table to search." 
+                        reqKeywords: ["SELECT", "FROM"],
+                        explanation: "The <code>SELECT</code> statement is the foundation of SQL. <br>• <code>*</code> is a wildcard that means 'all columns'. <br>• <code>FROM users</code> tells the database which table to search.<br><br>Example: <code>SELECT * FROM table;</code>" 
+                    },
+                    { 
+                        title: "Specific Columns", 
+                        sql: "SELECT name, email FROM users", 
+                        task: "Show only the 'name' and 'email' columns for all users.", 
+                        solution: "SELECT name, email FROM users",
+                        reqKeywords: ["SELECT", "FROM"],
+                        explanation: "Instead of fetching everything with <code>*</code>, you can list specific column names separated by commas. This is better for performance and clarity.<br><br>Example: <code>SELECT col1, col2 FROM table;</code>"
+                    },
+                    { 
+                        title: "Sorting Results", 
+                        sql: "SELECT * FROM products ORDER BY price DESC", 
+                        task: "List all products sorted by price from highest to lowest.", 
+                        solution: "SELECT * FROM products ORDER BY price DESC",
+                        reqKeywords: ["ORDER BY"],
+                        explanation: "Use <code>ORDER BY</code> to sort your results. Add <code>ASC</code> for ascending (default) or <code>DESC</code> for descending order.<br><br>Example: <code>SELECT * FROM table ORDER BY col DESC;</code>"
                     },
                     { 
                         title: "Limiting Results", 
@@ -384,7 +401,7 @@
                         task: "Get all columns for the first 2 users.", 
                         solution: "SELECT * FROM users LIMIT 2",
                         reqKeywords: ["LIMIT"],
-                        explanation: "When a table contains thousands of rows, you often just want to peek at the data. <br>Use <code>LIMIT n</code> to restrict the result to <code>n</code> rows."
+                        explanation: "When a table contains thousands of rows, you often just want to peek at the data. Use <code>LIMIT n</code> to restrict the result to <code>n</code> rows.<br><br>Example: <code>SELECT * FROM table LIMIT 5;</code>"
                     },
                     { 
                         title: "Unique Values", 
@@ -392,69 +409,49 @@
                         task: "Find all unique values in the 'role' column.", 
                         solution: "SELECT DISTINCT role FROM users",
                         reqKeywords: ["DISTINCT"],
-                        explanation: "The <code>DISTINCT</code> keyword removes duplicate rows from the result. <br>This is useful for finding all available categories, roles, or types."
+                        explanation: "The <code>DISTINCT</code> keyword removes duplicate rows from the result. This is useful for finding all available categories, roles, or types.<br><br>Example: <code>SELECT DISTINCT col FROM table;</code>"
                     }
                 ]
             },
             {
-                category: "1. Basics",
+                category: "1. Filtering Data",
                 lessons: [
                     { 
-                        title: "Specific Columns", 
-                        sql: "SELECT name, email FROM users", 
-                        task: "Show only the 'name' and 'email' columns for all users.", 
-                        solution: "SELECT name, email FROM users",
-                        explanation: "Instead of fetching everything with <code>*</code>, you can list specific column names separated by commas. This is better for performance and clarity."
-                    },
-                    { 
-                        title: "Filtering with WHERE", 
+                        title: "Basic Filtering", 
                         sql: "SELECT * FROM products WHERE price > 20", 
                         task: "Find all columns for products that cost more than $20.", 
                         solution: "SELECT * FROM products WHERE price > 20",
                         reqKeywords: ["WHERE"],
-                        explanation: "The <code>WHERE</code> clause filters rows based on a specific condition. Only rows where the condition is true are returned."
+                        explanation: "The <code>WHERE</code> clause filters rows based on a specific condition. Only rows where the condition is true are returned.<br><br>Example: <code>SELECT * FROM table WHERE col > 5;</code>"
                     },
                     { 
-                        title: "String Matching", 
+                        title: "Text Filtering", 
+                        sql: "SELECT * FROM users WHERE role = 'admin'", 
+                        task: "Find all users with the role 'admin'.", 
+                        solution: "SELECT * FROM users WHERE role = 'admin'",
+                        reqKeywords: ["WHERE"],
+                        explanation: "You can filter text columns using the <code>=</code> operator. Make sure to wrap text values in single quotes.<br><br>Example: <code>SELECT * FROM table WHERE col = 'value';</code>"
+                    },
+                    { 
+                        title: "Pattern Matching", 
                         sql: "SELECT * FROM users WHERE email LIKE '%gmail%'", 
                         task: "Find all columns for users with 'gmail' in their email.", 
                         solution: "SELECT * FROM users WHERE email LIKE '%gmail%'",
                         reqKeywords: ["LIKE"],
-                        explanation: "The <code>LIKE</code> operator is used for pattern matching. <br><code>%</code> is a wildcard that matches any sequence of characters (e.g. '%gmail%' matches any email containing 'gmail')."
+                        explanation: "The <code>LIKE</code> operator is used for pattern matching. <code>%</code> is a wildcard that matches any sequence of characters.<br><br>Example: <code>SELECT * FROM table WHERE col LIKE '%pattern%';</code>"
+                    },
+                    { 
+                        title: "Multiple Conditions", 
+                        sql: "SELECT * FROM products WHERE category = 'Electronics' AND price < 100", 
+                        task: "Find 'Electronics' that cost less than $100.", 
+                        solution: "SELECT * FROM products WHERE category = 'Electronics' AND price < 100",
+                        reqKeywords: ["AND", "WHERE"],
+                        explanation: "Combine multiple conditions using <code>AND</code> (both must be true) or <code>OR</code> (at least one must be true).<br><br>Example: <code>SELECT * FROM table WHERE col1 = 'a' AND col2 > 10;</code>"
                     }
                 ]
             },
             {
-                category: "2. Keys & Relationships",
-                lessons: [
-                    { 
-                        title: "Primary Keys (PK)", 
-                        sql: "SELECT id FROM users WHERE name = 'Alice Johnson'", 
-                        task: "Find the 'id' for the user named 'Alice Johnson'.", 
-                        solution: "SELECT id FROM users WHERE name = 'Alice Johnson'",
-                        reqKeywords: ["WHERE"],
-                        explanation: "A **Primary Key** is a unique identifier for a specific row. It ensures that every record can be distinctly identified (like a user ID)."
-                    },
-                    { 
-                        title: "Foreign Keys (FK)", 
-                        sql: "SELECT * FROM orders WHERE user_id = 1", 
-                        task: "Find all columns for orders placed by User ID 1.", 
-                        solution: "SELECT * FROM orders WHERE user_id = 1",
-                        reqKeywords: ["WHERE"],
-                        explanation: "A **Foreign Key** is a column that links to the Primary Key of another table. This link creates a relationship between the data (e.g. associating an order with a user)."
-                    },
-                    { 
-                        title: "Joining via Keys", 
-                        sql: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id", 
-                        task: "Join Users and Orders. Select the user's 'name' and the order's 'id' (aliased as 'order_id').", 
-                        solution: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id",
-                        reqKeywords: ["JOIN"],
-                        explanation: "To combine data from two tables, you use <code>JOIN</code>. You must specify how they match using <code>ON</code> (usually matching the Foreign Key to the Primary Key)."
-                    }
-                ]
-            },
-            {
-                category: "3. Aggregation",
+                category: "2. Aggregation",
                 lessons: [
                     { 
                         title: "Counting Rows", 
@@ -462,7 +459,23 @@
                         task: "Count the total number of orders placed.", 
                         solution: "SELECT COUNT(*) FROM orders",
                         reqKeywords: ["COUNT"],
-                        explanation: "<code>COUNT(*)</code> returns the total number of rows that match your criteria. It is one of the most common ways to get quick statistics."
+                        explanation: "<code>COUNT(*)</code> returns the total number of rows that match your criteria. It is one of the most common ways to get quick statistics.<br><br>Example: <code>SELECT COUNT(*) FROM table;</code>"
+                    },
+                    { 
+                        title: "Sum & Average", 
+                        sql: "SELECT SUM(stock), AVG(price) FROM products", 
+                        task: "Calculate total stock and average price of all products.", 
+                        solution: "SELECT SUM(stock), AVG(price) FROM products",
+                        reqKeywords: ["SUM", "AVG"],
+                        explanation: "Use <code>SUM(col)</code> to add up values and <code>AVG(col)</code> to calculate the mean.<br><br>Example: <code>SELECT SUM(sales) FROM table;</code>"
+                    },
+                    { 
+                        title: "Min & Max", 
+                        sql: "SELECT MIN(price), MAX(price) FROM products", 
+                        task: "Find the cheapest (min) and most expensive (max) product prices.", 
+                        solution: "SELECT MIN(price), MAX(price) FROM products",
+                        reqKeywords: ["MIN", "MAX"],
+                        explanation: "<code>MIN(col)</code> and <code>MAX(col)</code> return the smallest and largest values in a column, respectively.<br><br>Example: <code>SELECT MAX(score) FROM table;</code>"
                     },
                     { 
                         title: "Grouping Data", 
@@ -470,65 +483,73 @@
                         task: "Select 'category' and a count of products (aliased as 'count') for each category.", 
                         solution: "SELECT category, COUNT(*) as count FROM products GROUP BY category",
                         reqKeywords: ["GROUP BY"],
-                        explanation: "<code>GROUP BY</code> groups rows that have the same values into summary rows. It is often used with aggregate functions like `COUNT`, `SUM`, or `AVG`."
-                    },
-                    { 
-                        title: "Average Calculation", 
-                        sql: "SELECT AVG(price) as average_price FROM products", 
-                        task: "Calculate the average price of all products and alias it as 'average_price'.", 
-                        solution: "SELECT AVG(price) as average_price FROM products",
-                        reqKeywords: ["AVG"],
-                        explanation: "SQL has built-in math functions. <code>AVG()</code> calculates the average value of a numeric column. Others include <code>SUM()</code>, <code>MIN()</code>, and <code>MAX()</code>."
+                        explanation: "<code>GROUP BY</code> groups rows that have the same values into summary rows. It is often used with aggregate functions.<br><br>Example: <code>SELECT col, COUNT(*) FROM table GROUP BY col;</code>"
                     }
                 ]
             },
             {
-                category: "4. Joins (Intermediate)",
+                category: "3. Relationships & Joins",
                 lessons: [
+                    { 
+                        title: "Understanding Keys", 
+                        sql: "SELECT id FROM users WHERE name = 'Alice Johnson';\nSELECT * FROM orders WHERE user_id = 1;", 
+                        task: "Two queries: First find Alice's ID. Then, use that ID to find her orders.", 
+                        solution: "SELECT id FROM users WHERE name = 'Alice Johnson'; SELECT * FROM orders WHERE user_id = 1;",
+                        reqKeywords: ["SELECT"],
+                        explanation: "Primary Keys (PK) identify rows. Foreign Keys (FK) link to them. Usually you look up a PK first, then use it as an FK to find related data."
+                    },
                     { 
                         title: "Inner Join", 
                         sql: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id", 
                         task: "Show the user 'name' and order 'status' for all orders.", 
                         solution: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id",
                         reqKeywords: ["JOIN"],
-                        explanation: "An <code>INNER JOIN</code> (or just <code>JOIN</code>) returns only the rows where there is a match in **both** tables. Unmatched rows are excluded."
+                        explanation: "An <code>INNER JOIN</code> (or just <code>JOIN</code>) connects tables and returns only matched rows.<br><br>Example: <code>SELECT * FROM t1 JOIN t2 ON t1.id = t2.ref_id;</code>"
+                    },
+                    { 
+                        title: "Left Join", 
+                        sql: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id", 
+                        task: "Show all users, even those who haven't ordered anything. Select user 'name' and order 'id'.", 
+                        solution: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id",
+                        reqKeywords: ["LEFT JOIN"],
+                        explanation: "A <code>LEFT JOIN</code> returns **all** rows from the left table, and matched rows from the right. Unmatched are NULL.<br><br>Example: <code>SELECT * FROM t1 LEFT JOIN t2 ON ...;</code>"
                     },
                     { 
                         title: "Multiple Joins", 
                         sql: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'", 
                         task: "Find who ordered 'Electronics'. Select user 'name', product 'name', and product 'category'.", 
                         solution: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'",
-                        reqKeywords: ["JOIN"],
-                        explanation: "You can chain multiple <code>JOIN</code> statements to connect several tables together in a single query. Here we link Orders to both Users and Products."
-                    },
-                    { 
-                        title: "Left Join", 
-                        sql: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id", 
-                        task: "Show all users, even those who haven't ordered anything. Select user 'name' and order 'id' (aliased as 'order_id').", 
-                        solution: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id",
-                        reqKeywords: ["LEFT JOIN"],
-                        explanation: "A <code>LEFT JOIN</code> returns **all** rows from the left table (Users), and the matched rows from the right table (Orders). If there is no match, the result is NULL."
+                        reqKeywords: ["JOIN", "WHERE"],
+                        explanation: "You can chain multiple <code>JOIN</code> statements to connect several tables together in a single query."
                     }
                 ]
             },
             {
-                category: "5. Data Modification",
+                category: "4. Modifying Data",
                 lessons: [
                     { 
                         title: "Insert Data", 
                         sql: "INSERT INTO users (id, name, email, role, joined) \nVALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');\nSELECT * FROM users;", 
                         task: "Add a new user named 'Frank'. Then select all columns from users to verify.", 
-                        solution: "INSERT INTO users (id, name, email, role, joined) VALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');",
-                        reqKeywords: ["INSERT"],
-                        explanation: "<code>INSERT INTO</code> adds new records to a table. You typically specify the table name, the column names, and the `VALUES` to insert."
+                        solution: "INSERT INTO users (id, name, email, role, joined) VALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01'); SELECT * FROM users;",
+                        reqKeywords: ["INSERT", "SELECT"],
+                        explanation: "<code>INSERT INTO</code> adds new records.<br><br>Example: <code>INSERT INTO table (c1, c2) VALUES (v1, v2);</code>"
                     },
                     { 
                         title: "Update Data", 
                         sql: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';\nSELECT * FROM users;", 
                         task: "Change Alice's role to 'superadmin'. Then select all columns from users to verify.", 
-                        solution: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';",
-                        reqKeywords: ["UPDATE"],
-                        explanation: "<code>UPDATE</code> modifies existing records. <br>⚠️ **Important:** Always include a <code>WHERE</code> clause, or you might accidentally update every row in the table!"
+                        solution: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson'; SELECT * FROM users;",
+                        reqKeywords: ["UPDATE", "SELECT"],
+                        explanation: "<code>UPDATE</code> modifies existing records. Always use WHERE!<br><br>Example: <code>UPDATE table SET c1 = val WHERE c2 = condition;</code>"
+                    },
+                    { 
+                        title: "Delete Data", 
+                        sql: "DELETE FROM orders WHERE status = 'cancelled';\nSELECT * FROM orders;", 
+                        task: "Delete all 'cancelled' orders. Then select all orders to verify.", 
+                        solution: "DELETE FROM orders WHERE status = 'cancelled'; SELECT * FROM orders;",
+                        reqKeywords: ["DELETE", "SELECT"],
+                        explanation: "<code>DELETE</code> removes rows. ⚠️ **Critical:** Always include a WHERE clause!<br><br>Example: <code>DELETE FROM table WHERE col = val;</code>"
                     }
                 ]
             }
