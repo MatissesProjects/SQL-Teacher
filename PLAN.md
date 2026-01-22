@@ -1,34 +1,21 @@
-# SQL-Teacher Improvement Plan
+# Plan
 
-## Goal
-Enhance the existing single-file SQL learning tool to better support teaching multiple students in a classroom or workshop setting.
+## Completed
+- [x] Initial Project Setup
+- [x] Basic SQL Engine (SQL.js)
+- [x] Curriculum Structure
+- [x] Local Storage Saving
 
-## Core Philosophy
-- **Local-First:** Maintain the "no setup" advantage. Everything runs in the browser.
-- **Teacher-Centric:** Empower the teacher to customize content and present effectively.
-- **Student-Centric:** Provide better feedback and progress tracking.
-
-## Phase 1: Interactive Learning & Validation (Completed)
-- [x] **Result Comparison:** Implemented "Check Answer" button.
-- [x] **Feedback UI:** Added success/failure messages.
-
-## Phase 2: Progress Tracking (Completed)
-- [x] **Lesson Status:** Tracking completed lessons in `localStorage`.
-- [x] **Visual Indicators:** Added checkmarks next to completed lessons.
-
-## Phase 3: Content Flexibility (The "Teacher" Feature) (Completed)
-- [x] **Import Curriculum:** Added JSON import for custom lesson plans.
-- [x] **Custom Init SQL:** Supported in the import format.
-
-## Phase 4: Classroom/Presentation Tools (Completed)
-- [x] **Presentation Mode:** Added toggle for sidebar/font size.
-- [x] **Student Export:** Added button to download progress JSON.
-
-## Phase 5: Student Aids (Completed)
-- [x] **SQL Cheat Sheet:** A reference modal with common SQL syntax patterns.
-- [x] **Friendly Error Messages:** Intercept raw SQL errors and provide helpful hints.
-
-## Future Ideas (Backlog)
--   In-browser schema builder/editor.
--   Multi-tab query editor.
--   Visual Query Builder (Drag and drop).
+## Current Tasks (Refinement & Cleanups)
+- [ ] **Lesson Content Improvements**
+    - [ ] Replace "Hello SQL" with a more standard "Select All" lesson.
+    - [ ] Add "Explanation" field to lessons to provide educational context (not just tests).
+    - [ ] Display explanation in the task banner.
+- [ ] **UI/UX Improvements**
+    - [ ] **Run Indication**: Add visual feedback (flash/toast) when a query runs, even if results are identical.
+    - [ ] **Save Snippet**: Add a dedicated button to save the current editor content as a new snippet.
+    - [ ] **Import/Export Icons**: Swap the icons (Export -> Up/Out, Import -> Down/In).
+    - [ ] **Data Grid Styling**: Make values darker (black/dark slate) and headers bold.
+    - [ ] **Sidebar Layout**: Make Curriculum and Schema sections collapsible/resizable.
+- [ ] **Code Quality**
+    - [ ] General cleanup of inline styles if necessary.
