@@ -383,6 +383,7 @@
                         sql: "SELECT * FROM users LIMIT 2", 
                         task: "Get all columns for the first 2 users.", 
                         solution: "SELECT * FROM users LIMIT 2",
+                        reqKeywords: ["LIMIT"],
                         explanation: "When a table contains thousands of rows, you often just want to peek at the data. <br>Use <code>LIMIT n</code> to restrict the result to <code>n</code> rows."
                     },
                     { 
@@ -390,6 +391,7 @@
                         sql: "SELECT DISTINCT role FROM users", 
                         task: "Find all unique values in the 'role' column.", 
                         solution: "SELECT DISTINCT role FROM users",
+                        reqKeywords: ["DISTINCT"],
                         explanation: "The <code>DISTINCT</code> keyword removes duplicate rows from the result. <br>This is useful for finding all available categories, roles, or types."
                     }
                 ]
@@ -409,6 +411,7 @@
                         sql: "SELECT * FROM products WHERE price > 20", 
                         task: "Find all columns for products that cost more than $20.", 
                         solution: "SELECT * FROM products WHERE price > 20",
+                        reqKeywords: ["WHERE"],
                         explanation: "The <code>WHERE</code> clause filters rows based on a specific condition. Only rows where the condition is true are returned."
                     },
                     { 
@@ -416,6 +419,7 @@
                         sql: "SELECT * FROM users WHERE email LIKE '%gmail%'", 
                         task: "Find all columns for users with 'gmail' in their email.", 
                         solution: "SELECT * FROM users WHERE email LIKE '%gmail%'",
+                        reqKeywords: ["LIKE"],
                         explanation: "The <code>LIKE</code> operator is used for pattern matching. <br><code>%</code> is a wildcard that matches any sequence of characters (e.g. '%gmail%' matches any email containing 'gmail')."
                     }
                 ]
@@ -428,6 +432,7 @@
                         sql: "SELECT id FROM users WHERE name = 'Alice Johnson'", 
                         task: "Find the 'id' for the user named 'Alice Johnson'.", 
                         solution: "SELECT id FROM users WHERE name = 'Alice Johnson'",
+                        reqKeywords: ["WHERE"],
                         explanation: "A **Primary Key** is a unique identifier for a specific row. It ensures that every record can be distinctly identified (like a user ID)."
                     },
                     { 
@@ -435,6 +440,7 @@
                         sql: "SELECT * FROM orders WHERE user_id = 1", 
                         task: "Find all columns for orders placed by User ID 1.", 
                         solution: "SELECT * FROM orders WHERE user_id = 1",
+                        reqKeywords: ["WHERE"],
                         explanation: "A **Foreign Key** is a column that links to the Primary Key of another table. This link creates a relationship between the data (e.g. associating an order with a user)."
                     },
                     { 
@@ -442,6 +448,7 @@
                         sql: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id", 
                         task: "Join Users and Orders. Select the user's 'name' and the order's 'id' (aliased as 'order_id').", 
                         solution: "SELECT users.name, orders.id as order_id FROM users JOIN orders ON users.id = orders.user_id",
+                        reqKeywords: ["JOIN"],
                         explanation: "To combine data from two tables, you use <code>JOIN</code>. You must specify how they match using <code>ON</code> (usually matching the Foreign Key to the Primary Key)."
                     }
                 ]
@@ -454,6 +461,7 @@
                         sql: "SELECT COUNT(*) FROM orders", 
                         task: "Count the total number of orders placed.", 
                         solution: "SELECT COUNT(*) FROM orders",
+                        reqKeywords: ["COUNT"],
                         explanation: "<code>COUNT(*)</code> returns the total number of rows that match your criteria. It is one of the most common ways to get quick statistics."
                     },
                     { 
@@ -461,6 +469,7 @@
                         sql: "SELECT category, COUNT(*) as count FROM products GROUP BY category", 
                         task: "Select 'category' and a count of products (aliased as 'count') for each category.", 
                         solution: "SELECT category, COUNT(*) as count FROM products GROUP BY category",
+                        reqKeywords: ["GROUP BY"],
                         explanation: "<code>GROUP BY</code> groups rows that have the same values into summary rows. It is often used with aggregate functions like `COUNT`, `SUM`, or `AVG`."
                     },
                     { 
@@ -468,6 +477,7 @@
                         sql: "SELECT AVG(price) as average_price FROM products", 
                         task: "Calculate the average price of all products and alias it as 'average_price'.", 
                         solution: "SELECT AVG(price) as average_price FROM products",
+                        reqKeywords: ["AVG"],
                         explanation: "SQL has built-in math functions. <code>AVG()</code> calculates the average value of a numeric column. Others include <code>SUM()</code>, <code>MIN()</code>, and <code>MAX()</code>."
                     }
                 ]
@@ -480,6 +490,7 @@
                         sql: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id", 
                         task: "Show the user 'name' and order 'status' for all orders.", 
                         solution: "SELECT users.name, orders.status \nFROM users \nJOIN orders ON users.id = orders.user_id",
+                        reqKeywords: ["JOIN"],
                         explanation: "An <code>INNER JOIN</code> (or just <code>JOIN</code>) returns only the rows where there is a match in **both** tables. Unmatched rows are excluded."
                     },
                     { 
@@ -487,6 +498,7 @@
                         sql: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'", 
                         task: "Find who ordered 'Electronics'. Select user 'name', product 'name', and product 'category'.", 
                         solution: "SELECT users.name, products.name, products.category \nFROM orders \nJOIN users ON orders.user_id = users.id \nJOIN products ON orders.product_id = products.id \nWHERE products.category = 'Electronics'",
+                        reqKeywords: ["JOIN"],
                         explanation: "You can chain multiple <code>JOIN</code> statements to connect several tables together in a single query. Here we link Orders to both Users and Products."
                     },
                     { 
@@ -494,6 +506,7 @@
                         sql: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id", 
                         task: "Show all users, even those who haven't ordered anything. Select user 'name' and order 'id' (aliased as 'order_id').", 
                         solution: "SELECT users.name, orders.id as order_id \nFROM users \nLEFT JOIN orders ON users.id = orders.user_id",
+                        reqKeywords: ["LEFT JOIN"],
                         explanation: "A <code>LEFT JOIN</code> returns **all** rows from the left table (Users), and the matched rows from the right table (Orders). If there is no match, the result is NULL."
                     }
                 ]
@@ -506,6 +519,7 @@
                         sql: "INSERT INTO users (id, name, email, role, joined) \nVALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');\nSELECT * FROM users;", 
                         task: "Add a new user named 'Frank'. Then select all columns from users to verify.", 
                         solution: "INSERT INTO users (id, name, email, role, joined) VALUES (6, 'Frank', 'frank@test.com', 'user', '2023-06-01');",
+                        reqKeywords: ["INSERT"],
                         explanation: "<code>INSERT INTO</code> adds new records to a table. You typically specify the table name, the column names, and the `VALUES` to insert."
                     },
                     { 
@@ -513,6 +527,7 @@
                         sql: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';\nSELECT * FROM users;", 
                         task: "Change Alice's role to 'superadmin'. Then select all columns from users to verify.", 
                         solution: "UPDATE users SET role = 'superadmin' WHERE name = 'Alice Johnson';",
+                        reqKeywords: ["UPDATE"],
                         explanation: "<code>UPDATE</code> modifies existing records. <br>⚠️ **Important:** Always include a <code>WHERE</code> clause, or you might accidentally update every row in the table!"
                     }
                 ]
@@ -864,6 +879,37 @@
             if (!activeSnippet.task || !activeSnippet.solution) return;
             
             const userSql = document.getElementById('sql-editor').value;
+            const banner = document.getElementById('task-banner');
+            const resultContainer = document.getElementById('result-container');
+
+            // 0. Keyword Check
+            if (activeSnippet.reqKeywords && activeSnippet.reqKeywords.length > 0) {
+                const upperSql = userSql.toUpperCase();
+                const missing = activeSnippet.reqKeywords.filter(kw => !upperSql.includes(kw));
+                
+                if (missing.length > 0) {
+                     // Failure Feedback for Keywords
+                    banner.classList.remove('border-slate-700');
+                    banner.classList.add('bg-orange-900/20', 'border-orange-500/50');
+
+                    const failMsg = document.createElement('div');
+                    failMsg.className = "bg-orange-100 text-orange-800 p-2 text-xs font-bold text-center border-b border-orange-200 transition-opacity duration-500";
+                    failMsg.innerHTML = `⚠️ Solution must use: ${missing.join(", ")}`;
+                    resultContainer.insertBefore(failMsg, resultContainer.firstChild);
+                    
+                    setTimeout(() => {
+                        failMsg.classList.add('opacity-0');
+                        setTimeout(() => failMsg.remove(), 500);
+                    }, 3000);
+
+                     setTimeout(() => {
+                        banner.classList.remove('bg-orange-900/20', 'border-orange-500/50');
+                        banner.classList.add('border-slate-700');
+                    }, 2000);
+                    
+                    return; // Stop check
+                }
+            }
             
             try {
                 // 1. Run User Query
@@ -886,9 +932,6 @@
                 const isCorrect = JSON.stringify(userRows) === JSON.stringify(solRows);
                 
                 runQuery(); // Always run to show results
-
-                const banner = document.getElementById('task-banner');
-                const resultContainer = document.getElementById('result-container');
 
                 if (isCorrect) {
                     // Save Progress
@@ -1110,6 +1153,7 @@
                 sql: "", // Empty for them to type
                 task: lesson.task,
                 solution: lesson.solution,
+                reqKeywords: lesson.reqKeywords,
                 explanation: lesson.explanation
             };
             updateUI();
@@ -1118,7 +1162,7 @@
         function loadSnippet(id) {
             const found = savedSnippets.find(s => s.id === id);
             if (found) {
-                activeSnippet = { ...found, task: null, solution: null, explanation: null }; // Load simplified
+                activeSnippet = { ...found, task: null, solution: null, explanation: null, reqKeywords: null }; // Load simplified
                 updateUI();
                 runQuery(); // Auto run on load
             }
@@ -1131,6 +1175,7 @@
                 sql: "SELECT * FROM users",
                 task: null,
                 solution: null,
+                reqKeywords: null,
                 explanation: null
             };
             savedSnippets.push(activeSnippet);
