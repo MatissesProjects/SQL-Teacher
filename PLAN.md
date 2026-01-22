@@ -18,6 +18,10 @@
     - [x] **Data Grid Styling**: Bold headers and dark text for results.
     - [x] **Sidebar Layout**: Implemented hover-to-reveal floating sidebar.
     - [x] **Collapsible Sections**: Categories and Schema are now toggleable.
+    - [x] **Next Lesson**: Added button to quickly advance after success.
+    - [x] **Feedback Messages**: Auto-dismiss success/error toasts.
+    - [x] **Schema Resizing**: Added draggable handle to sidebar footer.
+    - [x] **Table Inspector**: Added modal to view DDL and sample data on table click.
 - [x] **Documentation**
     - [x] Updated README.md to reflect new features and sidebar behavior.
 - [x] **Bug Fixes**
