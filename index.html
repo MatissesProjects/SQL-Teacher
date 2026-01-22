@@ -169,6 +169,9 @@
                 </div>
                 <div class="flex flex-col gap-2">
                     <div class="flex gap-2">
+                        <button onclick="loadPreviousLesson()" class="btn-outline" title="Previous Lesson">
+                            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                        </button>
                         <button onclick="resetLesson()" class="btn-outline" title="Restart Lesson">
                             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                         </button>
@@ -934,6 +937,35 @@
 
             } catch (err) {
                 console.error(err);
+            }
+        }
+
+        function loadPreviousLesson() {
+             // Find current lesson index
+            let currentCatIdx = -1;
+            let currentLessonIdx = -1;
+
+            for (let i = 0; i < CURRICULUM.length; i++) {
+                const lIdx = CURRICULUM[i].lessons.findIndex(l => l.title === activeSnippet.title);
+                if (lIdx !== -1) {
+                    currentCatIdx = i;
+                    currentLessonIdx = lIdx;
+                    break;
+                }
+            }
+
+            if (currentCatIdx === -1) return; // Not found
+
+            if (currentLessonIdx > 0) {
+                // Previous in same category
+                loadLesson(CURRICULUM[currentCatIdx].lessons[currentLessonIdx - 1]);
+            } else if (currentCatIdx > 0) {
+                // Last in previous category
+                const prevCat = CURRICULUM[currentCatIdx - 1];
+                loadLesson(prevCat.lessons[prevCat.lessons.length - 1]);
+            } else {
+                // Already at the start
+                alert("This is the first lesson.");
             }
         }
 
