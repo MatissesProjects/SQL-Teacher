@@ -598,6 +598,15 @@
                 activeSnippet.sql = e.target.value;
                 debounceSave();
             });
+
+            // Run on Shift+Enter
+            document.getElementById('sql-editor').addEventListener('keydown', (e) => {
+                if (e.shiftKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    runQuery();
+                }
+            });
+
             document.getElementById('snippet-title').addEventListener('input', (e) => {
                 activeSnippet.title = e.target.value;
                 debounceSave();
