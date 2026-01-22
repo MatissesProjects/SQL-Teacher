@@ -127,6 +127,9 @@
         <!-- Toolbar -->
         <div class="toolbar">
             <div class="flex items-center gap-3 flex-1">
+                <div id="sidebar-trigger" class="text-slate-600 hover:text-slate-400 transition-colors cursor-pointer" title="Hover over the left edge to expand menu">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </div>
                 <div class="bg-blue-500/10 text-blue-400 p-1.5 rounded">
                     <i data-lucide="terminal" class="w-4 h-4"></i>
                 </div>
@@ -578,6 +581,7 @@
             await initDB();
             renderSidebar();
             initResizer();
+            initSidebarInteraction();
             
             // Load first lesson if no snippets, or empty
             if (savedSnippets.length > 0) {
@@ -628,6 +632,40 @@
                 // Reset sidebar hover width behavior
                 sidebar.classList.remove('w-64');
             }
+        }
+
+        function initSidebarInteraction() {
+            const trigger = document.getElementById('sidebar-trigger');
+            const sidebar = document.getElementById('main-sidebar');
+            let closeTimer;
+
+            function openSidebar() {
+                clearTimeout(closeTimer);
+                sidebar.classList.remove('w-3');
+                sidebar.classList.add('w-64');
+            }
+
+            function closeSidebar() {
+                // Only close if not hovered
+                if (!sidebar.matches(':hover') && !trigger.matches(':hover')) {
+                    sidebar.classList.remove('w-64');
+                    sidebar.classList.add('w-3');
+                }
+            }
+
+            // Trigger Events
+            trigger.addEventListener('mouseenter', openSidebar);
+            trigger.addEventListener('mouseleave', () => {
+                closeTimer = setTimeout(closeSidebar, 200);
+            });
+
+            // Sidebar Events
+            sidebar.addEventListener('mouseenter', () => {
+                clearTimeout(closeTimer);
+            });
+            sidebar.addEventListener('mouseleave', () => {
+                closeTimer = setTimeout(closeSidebar, 200);
+            });
         }
 
         async function initDB() {
