@@ -742,9 +742,14 @@
                     
                     // Visual Feedback in Results
                     const successMsg = document.createElement('div');
-                    successMsg.className = "bg-green-100 text-green-800 p-2 text-xs font-bold text-center border-b border-green-200";
+                    successMsg.className = "bg-green-100 text-green-800 p-2 text-xs font-bold text-center border-b border-green-200 transition-opacity duration-500";
                     successMsg.innerHTML = "✅ Correct! Result matches the solution.";
                     resultContainer.insertBefore(successMsg, resultContainer.firstChild);
+                    
+                    setTimeout(() => {
+                        successMsg.classList.add('opacity-0');
+                        setTimeout(() => successMsg.remove(), 500);
+                    }, 3000);
 
                     setTimeout(() => {
                         banner.classList.remove('bg-green-900/20', 'border-green-500/50');
@@ -761,9 +766,14 @@
                     banner.classList.add('bg-red-900/20', 'border-red-500/50');
 
                     const failMsg = document.createElement('div');
-                    failMsg.className = "bg-red-100 text-red-800 p-2 text-xs font-bold text-center border-b border-red-200";
+                    failMsg.className = "bg-red-100 text-red-800 p-2 text-xs font-bold text-center border-b border-red-200 transition-opacity duration-500";
                     failMsg.innerHTML = "❌ Incorrect. Results do not match solution.";
                     resultContainer.insertBefore(failMsg, resultContainer.firstChild);
+
+                    setTimeout(() => {
+                        failMsg.classList.add('opacity-0');
+                        setTimeout(() => failMsg.remove(), 500);
+                    }, 3000);
 
                      setTimeout(() => {
                         banner.classList.remove('bg-red-900/20', 'border-red-500/50');
